@@ -2,10 +2,12 @@ import { useState } from 'react'
 import './App.css'
 import SandpackEditor from './SandpackEditor'
 
-function App() {
-  const [selectedTemplate, setSelectedTemplate] = useState('react-ts')
+type Template = 'static' | 'angular' | 'react' | 'react-ts' | 'solid' | 'svelte' | 'vanilla' | 'vanilla-ts' | 'vue' | 'vue-ts'
 
-  const templates = [
+function App() {
+  const [selectedTemplate, setSelectedTemplate] = useState<Template>('react-ts')
+
+  const templates: Template[] = [
     'static',
     'angular',
     'react',
@@ -17,6 +19,7 @@ function App() {
     'vue',
     'vue-ts'
   ]
+
   return (
     <>
       <h1>Vite + React</h1>
@@ -25,7 +28,7 @@ function App() {
         <select
           id="template-select"
           value={selectedTemplate}
-          onChange={(e) => setSelectedTemplate(e.target.value)}
+          onChange={(e) => setSelectedTemplate(e.target.value as Template)}
         >
           {templates.map((template) => (
             <option key={template} value={template}>
