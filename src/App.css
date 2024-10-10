@@ -40,3 +40,22 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Add these new styles */
+.sp-wrapper {
+  width: 100vw;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 0;
+}
+
+/* Remove this media query */
+@media (max-width: 768px) {
+  .sp-wrapper {
+    width: 100%;
+    padding: 0 1rem;
+  }
+}
+
