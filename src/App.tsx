@@ -39,8 +39,13 @@ function App() {
           </select>
         </div>
       </header>
-      <div className="sp-wrapper">
-        <SandpackEditor template={selectedTemplate} />
+      <div className="main-content">
+        <div className="chat-container">
+          {/* Chat component will be added here in the next stage */}
+        </div>
+        <div className="sp-wrapper">
+          <SandpackEditor template={selectedTemplate} />
+        </div>
       </div>
     </div>
   )

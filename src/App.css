@@ -45,6 +45,18 @@ select {
   color: #333;
 }
 
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.chat-container {
+  width: 300px;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
 .sp-wrapper {
   flex: 1;
   display: flex;
