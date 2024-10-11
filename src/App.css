@@ -1,8 +1,7 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
   font-family: sans-serif;
 }
 
@@ -11,8 +10,23 @@ body {
   color: #333;
 }
 
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #333;
+  color: #fff;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
 .template-selector {
-  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
 }
 
 label {
@@ -20,12 +34,13 @@ label {
 }
 
 select {
-  padding: 0.5rem;
+  padding: 0.25rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: #fff;
+  color: #333;
 }
 
-/* Add these new styles */
 .sp-wrapper {
   width: 100vw;
   max-width: 100%;
@@ -33,6 +48,7 @@ select {
   padding: 0;
   position: absolute;
   left: 0;
+  top: 40px; /* Adjust this value based on the actual height of your header */
 }
 
 /* Remove this media query */

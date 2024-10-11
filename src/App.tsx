@@ -22,21 +22,23 @@ function App() {
 
   return (
     <>
-      <h1>ChatGround</h1>
-      <div className="template-selector">
-        <label htmlFor="template-select">Select Template: </label>
-        <select
-          id="template-select"
-          value={selectedTemplate}
-          onChange={(e) => setSelectedTemplate(e.target.value as Template)}
-        >
-          {templates.map((template) => (
-            <option key={template} value={template}>
-              {template}
-            </option>
-          ))}
-        </select>
-      </div>
+      <header className="app-header">
+        <h1>ChatGround</h1>
+        <div className="template-selector">
+          <label htmlFor="template-select">Template: </label>
+          <select
+            id="template-select"
+            value={selectedTemplate}
+            onChange={(e) => setSelectedTemplate(e.target.value as Template)}
+          >
+            {templates.map((template) => (
+              <option key={template} value={template}>
+                {template}
+              </option>
+            ))}
+          </select>
+        </div>
+      </header>
       <div className="sp-wrapper">
         <SandpackEditor template={selectedTemplate} />
       </div>
