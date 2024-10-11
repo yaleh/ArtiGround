@@ -21,7 +21,7 @@ function App() {
   ]
 
   return (
-    <>
+    <div className="app-container">
       <header className="app-header">
         <h1>ChatGround</h1>
         <div className="template-selector">
@@ -42,7 +42,7 @@ function App() {
       <div className="sp-wrapper">
         <SandpackEditor template={selectedTemplate} />
       </div>
-    </>
+    </div>
   )
 }
 

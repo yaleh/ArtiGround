@@ -8,44 +8,41 @@ interface SandpackEditorProps {
 
 const SandpackEditor: React.FC<SandpackEditorProps> = ({ template }) => {
   return (
-    <>
-      <SandpackProvider
-        template={template}
-        key={template}
-      >
-        <SandpackLayout
-          style={{ height: '500px' }}
-        >
-          <SandpackFileExplorer />
-          <SandpackCodeEditor
-            showTabs={true}
-            showLineNumbers={true}
-            closableTabs={true}
-            style={{
-              height: '100%',
-              overflow: 'auto',
-              flexGrow: 0.5,
-              flexShrink: 0.5,
-            }}
-          />
-          <SandpackPreview
-            showNavigator={true}
-            showRefreshButton={true}
-            style={{
-              height: '100%',
-            }}
-          />
-        </SandpackLayout>
-        <div style={{ width: '100%', height: '100px' }}>
-          <SandpackConsole
-            standalone
-            style={{
-              height: '100%',
-            }}
-          />
-        </div>
-      </SandpackProvider>
-    </>
+    <SandpackProvider
+      template={template}
+      key={template}
+      style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+    >
+      <SandpackLayout style={{ flex: 1, minHeight: 0 }}>
+        <SandpackFileExplorer />
+        <SandpackCodeEditor
+          showTabs={true}
+          showLineNumbers={true}
+          closableTabs={true}
+          style={{
+            height: '100%',
+            overflow: 'auto',
+            flexGrow: 0.5,
+            flexShrink: 0.5,
+          }}
+        />
+        <SandpackPreview
+          showNavigator={true}
+          showRefreshButton={true}
+          style={{
+            height: '100%',
+          }}
+        />
+      </SandpackLayout>
+      <div style={{ height: '20%', minHeight: '100px' }}>
+        <SandpackConsole
+          standalone
+          style={{
+            height: '100%',
+          }}
+        />
+      </div>
+    </SandpackProvider>
   );
 };
 
