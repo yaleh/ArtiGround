@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { DeepChat } from 'deep-chat-react';
-import { Autocomplete, TextField, Button, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import { Autocomplete, TextField, Button, Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const Chat: React.FC = () => {
@@ -84,7 +84,7 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <div className="chat-wrapper">
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -151,41 +151,43 @@ const Chat: React.FC = () => {
         </AccordionDetails>
       </Accordion>
       
-      <DeepChat
-        ref={chatRef}
-        key={reload}
-        directConnection={{
-          openAI: {
-            key: apiKey,
-            chat: {
-              model: model,
-              system_prompt: systemPrompt
+      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        <DeepChat
+          ref={chatRef}
+          key={reload}
+          directConnection={{
+            openAI: {
+              key: apiKey,
+              chat: {
+                model: model,
+                system_prompt: systemPrompt
+              },
+            }
+          }}
+          connect={{ url: url }}
+          style={{ borderRadius: '8px', width: '100%', height: '100%' }}
+          messageStyles={{
+            default: {
+              shared: { bubble: { backgroundColor: '#f0f0f0', padding: '8px' } },
             },
-          }
-        }}
-        connect={{ url: url }}
-        style={{ borderRadius: '8px', width: '100%', height: 'calc(100% - 40px)' }}
-        messageStyles={{
-          default: {
-            shared: { bubble: { backgroundColor: '#f0f0f0', padding: '8px' } },
-          },
-        }}
-        textInput={{ placeholder: { text: 'Ask about the code...' } }}
-        submitButtonStyles={{
-          submit: { container: { default: { backgroundColor: '#007bff' } } },
-        }}
-        onNewMessage={handleNewMessage}
-        demo={true}
-      />
+          }}
+          textInput={{ placeholder: { text: 'Ask about the code...' } }}
+          submitButtonStyles={{
+            submit: { container: { default: { backgroundColor: '#007bff' } } },
+          }}
+          onNewMessage={handleNewMessage}
+          demo={true}
+        />
+      </Box>
       <Button 
         variant="contained" 
         color="secondary" 
         onClick={handleClearChat}
-        style={{ marginTop: '10px' }}
+        sx={{ mt: 1 }}
       >
         Reset Chat
       </Button>
-    </div>
+    </Box>
   );
 };
 
