@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import SandpackEditor from './SandpackEditor'
+import Chat from './Chat'  // Import the new Chat component
 
 type Template = 'static' | 'angular' | 'react' | 'react-ts' | 'solid' | 'svelte' | 'vanilla' | 'vanilla-ts' | 'vue' | 'vue-ts'
 
@@ -41,7 +42,7 @@ function App() {
       </header>
       <div className="main-content">
         <div className="chat-container">
-          {/* Chat component will be added here in the next stage */}
+          <Chat />
         </div>
         <div className="sp-wrapper">
           <SandpackEditor template={selectedTemplate} />
