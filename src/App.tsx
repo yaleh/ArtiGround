@@ -46,7 +46,7 @@ function App() {
               <Grid item xs={12} md={4} lg={3} sx={{ height: isMobile ? 'auto' : '100%', minHeight: isMobile ? '300px' : 'auto' }}>
                 <Chat />
               </Grid>
-              <Grid item xs={12} md={8} lg={9} sx={{ height: '100%' }}>
+              <Grid item xs={12} md={8} lg={9} sx={{ height: isMobile ? 'auto' : '100%' }}>
                 <SandpackEditor />
               </Grid>
             </Grid>

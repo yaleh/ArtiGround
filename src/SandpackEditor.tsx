@@ -25,7 +25,7 @@ const SandpackEditor: React.FC = () => {
           <Box sx={{
             display: 'flex',
             flexDirection: 'column',
-            height: '100%',
+            height: isMobile ? 'auto' : '100%',
             overflow: 'hidden',
             width: '100%'
           }}>
@@ -80,14 +80,6 @@ const SandpackEditor: React.FC = () => {
             </Box>
           </Box>
         </SandpackLayout>
-        {/* <Box sx={{ height: isMobile ? '200px' : '20%', minHeight: '100px' }}>
-          <SandpackConsole
-            standalone
-            style={{
-              height: '100%',
-            }}
-          />
-        </Box> */}
       </Box>
     </SandpackProvider>
   );
