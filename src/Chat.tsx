@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { DeepChat } from 'deep-chat-react';
-import { Autocomplete, TextField, Button } from '@mui/material';
+import { Autocomplete, TextField, Button, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -84,59 +85,72 @@ const Chat: React.FC = () => {
 
   return (
     <div className="chat-wrapper">
-      <div className="chat-inputs">
-        <Autocomplete
-          freeSolo
-          options={urlHistory}
-          value={url}
-          onInputChange={handleUrlChange}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder="API URL"
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography>Chat Settings</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className="chat-inputs">
+            <Autocomplete
+              freeSolo
+              options={urlHistory}
+              value={url}
+              onInputChange={handleUrlChange}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="API URL"
+                />
+              )}
             />
-          )}
-        />
-        <Autocomplete
-          freeSolo
-          options={apiKeyHistory}
-          value={apiKey}
-          onInputChange={(event, newValue) => {
-            if (newValue !== null) {
-              handleApiKeyChange({ target: { value: newValue } } as React.ChangeEvent<HTMLInputElement>);
-            }
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              type="password"
-              placeholder="API Key"
+            <Autocomplete
+              freeSolo
+              options={apiKeyHistory}
+              value={apiKey}
+              onInputChange={(event, newValue) => {
+                if (newValue !== null) {
+                  handleApiKeyChange({ target: { value: newValue } } as React.ChangeEvent<HTMLInputElement>);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  type="password"
+                  placeholder="API Key"
+                />
+              )}
             />
-          )}
-        />
-        <Autocomplete
-          freeSolo
-          options={modelHistory}
-          value={model}
-          onInputChange={handleModelChange}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder="Model"
+            <Autocomplete
+              freeSolo
+              options={modelHistory}
+              value={model}
+              onInputChange={handleModelChange}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Model"
+                />
+              )}
             />
-          )}
-        />
-        <TextField
-          multiline
-          rows={4}
-          value={systemPrompt}
-          onChange={handleSystemPromptChange}
-          placeholder="Enter system prompt here..."
-          fullWidth
-          variant="outlined"
-          style={{ marginTop: '10px', marginBottom: '10px' }}
-        />
-      </div>
+            <TextField
+              multiline
+              minRows={2}
+              maxRows={10}
+              value={systemPrompt}
+              onChange={handleSystemPromptChange}
+              placeholder="Enter system prompt here..."
+              fullWidth
+              variant="outlined"
+              style={{ marginTop: '10px', resize: 'vertical' }}
+            />
+          </div>
+        </AccordionDetails>
+      </Accordion>
+      
       <DeepChat
         ref={chatRef}
         key={reload}
