@@ -12,6 +12,7 @@ const Chat: React.FC = () => {
   const [modelHistory, setModelHistory] = useState<string[]>([]);
   const [reload, setReload] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [systemPrompt, setSystemPrompt] = useState('');
 
   useEffect(() => {
     // Load history from localStorage
@@ -35,7 +36,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     setReload(prev => prev + 1);
-  }, [url, apiKey, model]);
+  }, [url, apiKey, model, systemPrompt]);
 
   const handleNewMessage = (message: any) => {
     setMessages((prevMessages) => [...prevMessages, message]);
@@ -68,6 +69,10 @@ const Chat: React.FC = () => {
       updateHistory(newValue, modelHistory, setModelHistory, 'modelHistory');
     }
   }, [modelHistory, updateHistory]);
+
+  const handleSystemPromptChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSystemPrompt(event.target.value);
+  };
 
   return (
     <div className="chat-wrapper">
@@ -113,6 +118,16 @@ const Chat: React.FC = () => {
             />
           )}
         />
+        <TextField
+          multiline
+          rows={4}
+          value={systemPrompt}
+          onChange={handleSystemPromptChange}
+          placeholder="Enter system prompt here..."
+          fullWidth
+          variant="outlined"
+          style={{ marginTop: '10px', marginBottom: '10px' }}
+        />
       </div>
       <DeepChat
         key={reload}
@@ -120,7 +135,8 @@ const Chat: React.FC = () => {
           openAI: {
             key: apiKey,
             chat: {
-              model: model
+              model: model,
+              system_prompt: systemPrompt // Add the system prompt to the chat configuration
             },
           }
         }}
