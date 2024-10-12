@@ -17,12 +17,9 @@ const Chat: React.FC = () => {
     // Load history from localStorage
     const loadHistory = (key: string) => {
       const savedHistory = localStorage.getItem(key);
-      console.log(`Loading ${key} history from localStorage:`, savedHistory);
       if (savedHistory) {
         try {
-          const parsedHistory = JSON.parse(savedHistory);
-          console.log(`Parsed ${key} history:`, parsedHistory);
-          return parsedHistory;
+          return JSON.parse(savedHistory);
         } catch (error) {
           console.error(`Error parsing ${key} history:`, error);
         }
@@ -47,10 +44,8 @@ const Chat: React.FC = () => {
   const updateHistory = useCallback((value: string, history: string[], setHistory: React.Dispatch<React.SetStateAction<string[]>>, key: string) => {
     if (value && !isInitialLoad) {
       const updatedHistory = Array.from(new Set([value, ...history])).slice(0, 10);
-      console.log(`Updating ${key} history:`, updatedHistory);
       setHistory(updatedHistory);
       localStorage.setItem(key, JSON.stringify(updatedHistory));
-      console.log(`Saved ${key} history to localStorage`);
     }
   }, [isInitialLoad]);
 
@@ -73,10 +68,6 @@ const Chat: React.FC = () => {
       updateHistory(newValue, modelHistory, setModelHistory, 'modelHistory');
     }
   }, [modelHistory, updateHistory]);
-
-  console.log('Current URL history state:', urlHistory);
-  console.log('Current API Key history state:', apiKeyHistory);
-  console.log('Current Model history state:', modelHistory);
 
   return (
     <div className="chat-wrapper">
