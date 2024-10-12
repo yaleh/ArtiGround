@@ -53,25 +53,39 @@ const Chat: React.FC = () => {
     }
   }, [isInitialLoad]);
 
+  // Confirmation Handlers
+  const handleUrlConfirm = useCallback(() => {
+    updateHistory(url, urlHistory, setUrlHistory, 'urlHistory');
+  }, [url, urlHistory, updateHistory]);
+
+  const handleApiKeyConfirm = useCallback(() => {
+    updateHistory(apiKey, apiKeyHistory, setApiKeyHistory, 'apiKeyHistory');
+  }, [apiKey, apiKeyHistory, updateHistory]);
+
+  const handleModelConfirm = useCallback(() => {
+    updateHistory(model, modelHistory, setModelHistory, 'modelHistory');
+  }, [model, modelHistory, updateHistory]);
+
+  // Input Change Handlers (without updating history)
   const handleUrlChange = useCallback((event: React.ChangeEvent<{}>, newValue: string | null) => {
-    if (newValue) {
+    if (newValue !== null) {
       setUrl(newValue);
-      updateHistory(newValue, urlHistory, setUrlHistory, 'urlHistory');
+      // Removed updateHistory call from here
     }
-  }, [urlHistory, updateHistory]);
+  }, []);
 
   const handleApiKeyChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     setApiKey(newValue);
-    updateHistory(newValue, apiKeyHistory, setApiKeyHistory, 'apiKeyHistory');
-  }, [apiKeyHistory, updateHistory]);
+    // Removed updateHistory call from here
+  }, []);
 
   const handleModelChange = useCallback((event: React.ChangeEvent<{}>, newValue: string | null) => {
-    if (newValue) {
+    if (newValue !== null) {
       setModel(newValue);
-      updateHistory(newValue, modelHistory, setModelHistory, 'modelHistory');
+      // Removed updateHistory call from here
     }
-  }, [modelHistory, updateHistory]);
+  }, []);
 
   const handleSystemPromptChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSystemPrompt(event.target.value);
@@ -80,6 +94,14 @@ const Chat: React.FC = () => {
   const handleClearChat = () => {
     if (chatRef.current) {
       chatRef.current.clearMessages();
+    }
+  };
+
+  // Generic KeyDown Handler for Enter Key
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, confirmHandler: () => void) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent form submission or other default behaviors
+      confirmHandler();
     }
   };
 
@@ -95,6 +117,7 @@ const Chat: React.FC = () => {
         </AccordionSummary>
         <AccordionDetails>
           <div className="chat-inputs">
+            {/* URL Input with Confirmation Events */}
             <Autocomplete
               freeSolo
               options={urlHistory}
@@ -104,9 +127,13 @@ const Chat: React.FC = () => {
                 <TextField
                   {...params}
                   placeholder="API URL"
+                  onKeyDown={(event) => handleKeyDown(event, handleUrlConfirm)}
+                  onBlur={handleUrlConfirm}
                 />
               )}
             />
+
+            {/* API Key Input with Confirmation Events */}
             <Autocomplete
               freeSolo
               options={apiKeyHistory}
@@ -121,9 +148,13 @@ const Chat: React.FC = () => {
                   {...params}
                   type="password"
                   placeholder="API Key"
+                  onKeyDown={(event) => handleKeyDown(event, handleApiKeyConfirm)}
+                  onBlur={handleApiKeyConfirm}
                 />
               )}
             />
+
+            {/* Model Input with Confirmation Events */}
             <Autocomplete
               freeSolo
               options={modelHistory}
@@ -133,9 +164,12 @@ const Chat: React.FC = () => {
                 <TextField
                   {...params}
                   placeholder="Model"
+                  onKeyDown={(event) => handleKeyDown(event, handleModelConfirm)}
+                  onBlur={handleModelConfirm}
                 />
               )}
             />
+
             <TextField
               multiline
               minRows={2}
