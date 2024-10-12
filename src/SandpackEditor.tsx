@@ -13,6 +13,7 @@ const SandpackEditor: React.FC = () => {
     <SandpackProvider
       template={selectedTemplate}
       key={selectedTemplate}
+      style={{ height: '100%' }}
     >
       <Box sx={{ 
         height: '100%', 
@@ -25,14 +26,15 @@ const SandpackEditor: React.FC = () => {
             display: 'flex',
             flexDirection: isMobile ? 'column' : 'row',
             height: '100%',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            width: '100%'
           }}>
             <Box sx={{ 
               width: isMobile ? '100%' : '200px', 
               height: isMobile ? '200px' : '100%',
               overflow: 'hidden'
             }}>
-              <SandpackFileExplorer />
+              <SandpackFileExplorer/>
             </Box>
             <Box sx={{ 
               display: 'flex', 
@@ -47,6 +49,7 @@ const SandpackEditor: React.FC = () => {
                 style={{
                   height: isMobile ? '300px' : '100%',
                   flex: 1,
+                  width: isMobile ? '100%' : '50%',
                 }}
               />
               <SandpackPreview
@@ -55,6 +58,7 @@ const SandpackEditor: React.FC = () => {
                 style={{
                   height: isMobile ? '300px' : '100%',
                   flex: 1,
+                  width: isMobile ? '100%' : '50%',
                 }}
               />
             </Box>
