@@ -15,63 +15,79 @@ const SandpackEditor: React.FC = () => {
       key={selectedTemplate}
       style={{ height: '100%' }}
     >
-      <Box sx={{ 
-        height: '100%', 
-        display: 'flex', 
+      <Box sx={{
+        height: '100%',
+        display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden'
       }}>
         <SandpackLayout style={{ flex: 1, minHeight: 0 }}>
           <Box sx={{
             display: 'flex',
-            flexDirection: isMobile ? 'column' : 'row',
+            flexDirection: 'column',
             height: '100%',
             overflow: 'hidden',
             width: '100%'
           }}>
-            <Box sx={{ 
-              width: isMobile ? '100%' : '200px', 
-              height: isMobile ? '200px' : '100%',
-              overflow: 'hidden'
-            }}>
-              <SandpackFileExplorer/>
-            </Box>
-            <Box sx={{ 
-              display: 'flex', 
+            <Box sx={{
+              display: 'flex',
               flexDirection: isMobile ? 'column' : 'row',
-              flex: 1,
-              overflow: 'hidden'
+              height: isMobile ? '100%' : '80%',
+              overflow: 'hidden',
+              width: '100%'
             }}>
-              <SandpackCodeEditor
-                showTabs={true}
-                showLineNumbers={true}
-                closableTabs={true}
+              <Box sx={{
+                width: isMobile ? '100%' : '200px',
+                height: isMobile ? '200px' : '100%',
+                overflow: 'hidden'
+              }}>
+                <SandpackFileExplorer />
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                flex: 1,
+                overflow: 'hidden'
+              }}>
+                <SandpackCodeEditor
+                  showTabs={true}
+                  showLineNumbers={true}
+                  closableTabs={true}
+                  style={{
+                    height: isMobile ? '300px' : '100%',
+                    flex: 1,
+                    width: isMobile ? '100%' : '50%',
+                  }}
+                />
+                <SandpackPreview
+                  showNavigator={true}
+                  showRefreshButton={true}
+                  style={{
+                    height: isMobile ? '300px' : '100%',
+                    flex: 1,
+                    width: isMobile ? '100%' : '50%',
+                  }}
+                />
+              </Box>
+            </Box>
+            <Box sx={{ height: isMobile ? '200px' : '20%', minHeight: '100px' }}>
+              <SandpackConsole
+                standalone
                 style={{
-                  height: isMobile ? '300px' : '100%',
-                  flex: 1,
-                  width: isMobile ? '100%' : '50%',
-                }}
-              />
-              <SandpackPreview
-                showNavigator={true}
-                showRefreshButton={true}
-                style={{
-                  height: isMobile ? '300px' : '100%',
-                  flex: 1,
-                  width: isMobile ? '100%' : '50%',
+                  height: '100%',
                 }}
               />
             </Box>
           </Box>
         </SandpackLayout>
-        <Box sx={{ height: isMobile ? '200px' : '20%', minHeight: '100px' }}>
+        {/* <Box sx={{ height: isMobile ? '200px' : '20%', minHeight: '100px' }}>
           <SandpackConsole
             standalone
             style={{
               height: '100%',
             }}
           />
-        </Box>
+        </Box> */}
       </Box>
     </SandpackProvider>
   );
