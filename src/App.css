@@ -72,3 +72,16 @@ select {
   flex-direction: column;
   overflow: hidden;
 }
+
+.chat-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.chat-inputs input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
