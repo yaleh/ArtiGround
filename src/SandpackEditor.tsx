@@ -1,16 +1,15 @@
 import React from 'react';
 import { Sandpack, SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, SandpackConsole } from "@codesandbox/sandpack-react";
 import { SandpackFileExplorer } from 'sandpack-file-explorer';
+import { useTemplate } from './TemplateContext';
 
-interface SandpackEditorProps {
-  template: string;
-}
+const SandpackEditor: React.FC = () => {
+  const { selectedTemplate } = useTemplate();
 
-const SandpackEditor: React.FC<SandpackEditorProps> = ({ template }) => {
   return (
     <SandpackProvider
-      template={template}
-      key={template}
+      template={selectedTemplate}
+      key={selectedTemplate}
       style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
     >
       <SandpackLayout style={{ flex: 1, minHeight: 0 }}>
