@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { DeepChat } from 'deep-chat-react';
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, TextField, Button } from '@mui/material';
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -13,6 +13,8 @@ const Chat: React.FC = () => {
   const [reload, setReload] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [systemPrompt, setSystemPrompt] = useState('');
+
+  const chatRef = useRef<any>(null);
 
   useEffect(() => {
     // Load history from localStorage
@@ -74,6 +76,12 @@ const Chat: React.FC = () => {
     setSystemPrompt(event.target.value);
   };
 
+  const handleClearChat = () => {
+    if (chatRef.current) {
+      chatRef.current.clearMessages();
+    }
+  };
+
   return (
     <div className="chat-wrapper">
       <div className="chat-inputs">
@@ -130,13 +138,14 @@ const Chat: React.FC = () => {
         />
       </div>
       <DeepChat
+        ref={chatRef}
         key={reload}
         directConnection={{
           openAI: {
             key: apiKey,
             chat: {
               model: model,
-              system_prompt: systemPrompt // Add the system prompt to the chat configuration
+              system_prompt: systemPrompt
             },
           }
         }}
@@ -154,6 +163,14 @@ const Chat: React.FC = () => {
         onNewMessage={handleNewMessage}
         demo={true}
       />
+      <Button 
+        variant="contained" 
+        color="secondary" 
+        onClick={handleClearChat}
+        style={{ marginTop: '10px' }}
+      >
+        Reset Chat
+      </Button>
     </div>
   );
 };
