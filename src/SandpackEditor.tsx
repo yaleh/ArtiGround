@@ -30,7 +30,7 @@ const SandpackEditor: React.FC = () => {
             <Box sx={{ 
               width: isMobile ? '100%' : '200px', 
               height: isMobile ? '200px' : '100%',
-              overflow: 'auto'
+              overflow: 'hidden'
             }}>
               <SandpackFileExplorer />
             </Box>

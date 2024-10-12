@@ -22,7 +22,11 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <TemplateProvider>
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <Box sx={{
+          display: 'flex', 
+          flexDirection: 'column', 
+          height: '100vh'
+        }}>
           <AppBar position="static">
             <Toolbar>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -35,7 +39,7 @@ function App() {
             flexGrow: 1, 
             display: 'flex', 
             flexDirection: 'column', 
-            overflow: 'hidden', 
+            overflow: isMobile ? 'auto' : 'hidden', 
             py: 2 
           }}>
             <Grid container spacing={2} sx={{ flexGrow: 1, height: '100%' }}>
