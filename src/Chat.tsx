@@ -7,23 +7,32 @@ const Chat: React.FC = () => {
   const [url, setUrl] = useState('https://api.openai.com/v1/chat/completions');
   const [urlHistory, setUrlHistory] = useState<string[]>([]);
   const [apiKey, setApiKey] = useState('');
+  const [apiKeyHistory, setApiKeyHistory] = useState<string[]>([]);
   const [model, setModel] = useState('gpt-4o');
+  const [modelHistory, setModelHistory] = useState<string[]>([]);
   const [reload, setReload] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    // Load URL history from localStorage
-    const savedHistory = localStorage.getItem('urlHistory');
-    console.log('Loading URL history from localStorage:', savedHistory);
-    if (savedHistory) {
-      try {
-        const parsedHistory = JSON.parse(savedHistory);
-        console.log('Parsed URL history:', parsedHistory);
-        setUrlHistory(parsedHistory);
-      } catch (error) {
-        console.error('Error parsing URL history:', error);
+    // Load history from localStorage
+    const loadHistory = (key: string) => {
+      const savedHistory = localStorage.getItem(key);
+      console.log(`Loading ${key} history from localStorage:`, savedHistory);
+      if (savedHistory) {
+        try {
+          const parsedHistory = JSON.parse(savedHistory);
+          console.log(`Parsed ${key} history:`, parsedHistory);
+          return parsedHistory;
+        } catch (error) {
+          console.error(`Error parsing ${key} history:`, error);
+        }
       }
-    }
+      return [];
+    };
+
+    setUrlHistory(loadHistory('urlHistory'));
+    setApiKeyHistory(loadHistory('apiKeyHistory'));
+    setModelHistory(loadHistory('modelHistory'));
     setIsInitialLoad(false);
   }, []);
 
@@ -35,19 +44,39 @@ const Chat: React.FC = () => {
     setMessages((prevMessages) => [...prevMessages, message]);
   };
 
-  const handleUrlChange = useCallback((event: React.ChangeEvent<{}>, newValue: string | null) => {
-    if (newValue && !isInitialLoad) {
-      setUrl(newValue);
-      // Update URL history
-      const updatedHistory = Array.from(new Set([newValue, ...urlHistory])).slice(0, 10);
-      console.log('Updating URL history:', updatedHistory);
-      setUrlHistory(updatedHistory);
-      localStorage.setItem('urlHistory', JSON.stringify(updatedHistory));
-      console.log('Saved URL history to localStorage');
+  const updateHistory = useCallback((value: string, history: string[], setHistory: React.Dispatch<React.SetStateAction<string[]>>, key: string) => {
+    if (value && !isInitialLoad) {
+      const updatedHistory = Array.from(new Set([value, ...history])).slice(0, 10);
+      console.log(`Updating ${key} history:`, updatedHistory);
+      setHistory(updatedHistory);
+      localStorage.setItem(key, JSON.stringify(updatedHistory));
+      console.log(`Saved ${key} history to localStorage`);
     }
-  }, [urlHistory, isInitialLoad]);
+  }, [isInitialLoad]);
+
+  const handleUrlChange = useCallback((event: React.ChangeEvent<{}>, newValue: string | null) => {
+    if (newValue) {
+      setUrl(newValue);
+      updateHistory(newValue, urlHistory, setUrlHistory, 'urlHistory');
+    }
+  }, [urlHistory, updateHistory]);
+
+  const handleApiKeyChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    setApiKey(newValue);
+    updateHistory(newValue, apiKeyHistory, setApiKeyHistory, 'apiKeyHistory');
+  }, [apiKeyHistory, updateHistory]);
+
+  const handleModelChange = useCallback((event: React.ChangeEvent<{}>, newValue: string | null) => {
+    if (newValue) {
+      setModel(newValue);
+      updateHistory(newValue, modelHistory, setModelHistory, 'modelHistory');
+    }
+  }, [modelHistory, updateHistory]);
 
   console.log('Current URL history state:', urlHistory);
+  console.log('Current API Key history state:', apiKeyHistory);
+  console.log('Current Model history state:', modelHistory);
 
   return (
     <div className="chat-wrapper">
@@ -64,17 +93,34 @@ const Chat: React.FC = () => {
             />
           )}
         />
-        <input
-          type="password"
+        <Autocomplete
+          freeSolo
+          options={apiKeyHistory}
           value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          placeholder="API Key"
+          onInputChange={(event, newValue) => {
+            if (newValue !== null) {
+              handleApiKeyChange({ target: { value: newValue } } as React.ChangeEvent<HTMLInputElement>);
+            }
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              type="password"
+              placeholder="API Key"
+            />
+          )}
         />
-        <input
-          type="text"
+        <Autocomplete
+          freeSolo
+          options={modelHistory}
           value={model}
-          onChange={(e) => setModel(e.target.value)}
-          placeholder="Model"
+          onInputChange={handleModelChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder="Model"
+            />
+          )}
         />
       </div>
       <DeepChat
