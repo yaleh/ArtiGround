@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTemplate } from './TemplateContext';
+import { useSystemPrompt } from './SystemPromptContext';
 
 const SYSTEM_PROMPT_TEMPLATES: Record<string, string> = {
   'static': 'You are an expert in static HTML, CSS, and JavaScript.',
@@ -55,7 +56,7 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
   isInitialLoad,
 }) => {
   const { selectedTemplate } = useTemplate();
-  const [systemPrompt, setSystemPrompt] = useState('');
+  const { systemPrompt, setSystemPrompt } = useSystemPrompt();
 
   useEffect(() => {
     const fetchSystemPrompt = async () => {
@@ -76,7 +77,7 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
     };
 
     fetchSystemPrompt();
-  }, [selectedTemplate]);
+  }, [selectedTemplate, setSystemPrompt]);
 
   const handleUrlChange = useCallback(
     (event: React.ChangeEvent<{}>, newValue: string | null) => {

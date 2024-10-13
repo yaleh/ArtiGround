@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { DeepChat } from 'deep-chat-react';
 import { Button, Box } from '@mui/material';
 import ChatSettings from './ChatSettings';
+import { useSystemPrompt, SystemPromptProvider } from './SystemPromptContext';
 
-const Chat: React.FC = () => {
+const ChatContent: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [url, setUrl] = useState('https://api.openai.com/v1/chat/completions');
   const [urlHistory, setUrlHistory] = useState<string[]>([]);
@@ -15,6 +16,8 @@ const Chat: React.FC = () => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const chatRef = useRef<typeof DeepChat>(null);
+
+  const { systemPrompt } = useSystemPrompt();
 
   useEffect(() => {
     const loadHistory = (key: string) => {
@@ -38,38 +41,6 @@ const Chat: React.FC = () => {
   useEffect(() => {
     setReload(prev => prev + 1);
   }, [url, apiKey, model]);
-
-  const handleNewMessage = useCallback((
-    body: { message: any, isHistory: boolean }
-  ) => {
-    if (body.message.role === 'user' && !body.isHistory) {
-      const systemPrompt = chatRef.current?.parentElement?.querySelector('textarea')?.value || '';
-      if (chatRef.current) {
-        chatRef.current.directConnection = {
-          openAI: {
-            key: apiKey,
-            chat: {
-              model: model,
-              system_prompt: systemPrompt
-            },
-          }
-        };
-      }
-    }
-  }, [apiKey, model]);
-
-  useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.directConnection = {
-        openAI: {
-          key: apiKey,
-          chat: {
-            model: model,
-          },
-        }
-      };
-    }
-  }, [apiKey, model]);
 
   const updateHistory = useCallback((
     value: string, 
@@ -101,6 +72,14 @@ const Chat: React.FC = () => {
       chatRef.current.clearMessages();
     }
   };
+
+  const handleRequestInterceptor = useCallback((requestDetails: any) => {
+    if (requestDetails.body && requestDetails.body.messages) {
+      const systemMessage = { role: "system", content: systemPrompt };
+      requestDetails.body.messages = [systemMessage, ...requestDetails.body.messages];
+    }
+    return requestDetails;
+  }, [systemPrompt]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -159,16 +138,11 @@ const Chat: React.FC = () => {
               }
             }
           }}
-          // messageStyles={{
-          //   default: {
-          //     shared: { bubble: { backgroundColor: '#f0f0f0', padding: '8px' } },
-          //   },
-          // }}
           textInput={{ placeholder: { text: 'Ask about the code...' } }}
           submitButtonStyles={{
             submit: { container: { default: { backgroundColor: '#007bff' } } },
           }}
-          onNewMessage={handleNewMessage}
+          requestInterceptor={handleRequestInterceptor}
           demo={true}
         />
       </Box>
@@ -181,6 +155,14 @@ const Chat: React.FC = () => {
         Reset Chat
       </Button>
     </Box>
+  );
+};
+
+const Chat: React.FC = () => {
+  return (
+    <SystemPromptProvider>
+      <ChatContent />
+    </SystemPromptProvider>
   );
 };
 
