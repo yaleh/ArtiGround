@@ -3,6 +3,7 @@ import { DeepChat } from 'deep-chat-react';
 import { Button, Box } from '@mui/material';
 import ChatSettings from './ChatSettings';
 import { useSystemPrompt, SystemPromptProvider } from './SystemPromptContext';
+import { updateHistory } from './utils/historyUtils';
 
 const ChatContent: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -42,30 +43,30 @@ const ChatContent: React.FC = () => {
     setReload(prev => prev + 1);
   }, [url, apiKey, model]);
 
-  const updateHistory = useCallback((
+  const handleUpdateHistory = useCallback((
     value: string, 
     history: string[], 
     setHistory: React.Dispatch<React.SetStateAction<string[]>>, 
     key: string
   ) => {
-    if (value && !isInitialLoad) {
-      const updatedHistory = Array.from(new Set([value, ...history])).slice(0, 10);
+    if (!isInitialLoad) {
+      const updatedHistory = updateHistory(value, history);
       setHistory(updatedHistory);
       localStorage.setItem(key, JSON.stringify(updatedHistory));
     }
   }, [isInitialLoad]);
 
   const handleUrlConfirm = useCallback(() => {
-    updateHistory(url, urlHistory, setUrlHistory, 'urlHistory');
-  }, [url, urlHistory, updateHistory]);
+    handleUpdateHistory(url, urlHistory, setUrlHistory, 'urlHistory');
+  }, [url, urlHistory, handleUpdateHistory]);
 
   const handleApiKeyConfirm = useCallback(() => {
-    updateHistory(apiKey, apiKeyHistory, setApiKeyHistory, 'apiKeyHistory');
-  }, [apiKey, apiKeyHistory, updateHistory]);
+    handleUpdateHistory(apiKey, apiKeyHistory, setApiKeyHistory, 'apiKeyHistory');
+  }, [apiKey, apiKeyHistory, handleUpdateHistory]);
 
   const handleModelConfirm = useCallback(() => {
-    updateHistory(model, modelHistory, setModelHistory, 'modelHistory');
-  }, [model, modelHistory, updateHistory]);
+    handleUpdateHistory(model, modelHistory, setModelHistory, 'modelHistory');
+  }, [model, modelHistory, handleUpdateHistory]);
 
   const handleClearChat = () => {
     if (chatRef.current) {
