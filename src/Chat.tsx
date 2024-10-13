@@ -174,9 +174,9 @@ const Chat: React.FC = () => {
       </Box>
       <Button 
         variant="contained" 
-        color="secondary" 
+        color="inherit"
         onClick={handleClearChat}
-        sx={{ mt: 1 }}
+        sx={{ mt: 1, backgroundColor: 'grey.400' }}
       >
         Reset Chat
       </Button>

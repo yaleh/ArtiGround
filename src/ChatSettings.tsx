@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   Autocomplete,
   TextField,
@@ -8,6 +8,20 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useTemplate } from './TemplateContext';
+
+const SYSTEM_PROMPT_TEMPLATES: Record<string, string> = {
+  'static': 'You are an expert in static HTML, CSS, and JavaScript.',
+  'angular': 'You are an Angular development expert.',
+  'react': 'You are a React development expert.',
+  'react-ts': 'You are a React with TypeScript development expert.',
+  'solid': 'You are a SolidJS development expert.',
+  'svelte': 'You are a Svelte development expert.',
+  'vanilla': 'You are an expert in vanilla JavaScript development.',
+  'vanilla-ts': 'You are an expert in vanilla TypeScript development.',
+  'vue': 'You are a Vue.js development expert.',
+  'vue-ts': 'You are a Vue.js with TypeScript development expert.',
+};
 
 interface ChatSettingsProps {
   url: string;
@@ -40,7 +54,29 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
   handleModelConfirm,
   isInitialLoad,
 }) => {
+  const { selectedTemplate } = useTemplate();
   const [systemPrompt, setSystemPrompt] = useState('');
+
+  useEffect(() => {
+    const fetchSystemPrompt = async () => {
+      try {
+        const response = await fetch(`/public/system_prompts/${selectedTemplate}.md`);
+        if (response.ok) {
+          const promptText = await response.text();
+          setSystemPrompt(promptText);
+        } else {
+          // Fallback to internal template
+          setSystemPrompt(SYSTEM_PROMPT_TEMPLATES[selectedTemplate] || '');
+        }
+      } catch (error) {
+        console.error('Error fetching system prompt:', error);
+        // Fallback to internal template
+        setSystemPrompt(SYSTEM_PROMPT_TEMPLATES[selectedTemplate] || '');
+      }
+    };
+
+    fetchSystemPrompt();
+  }, [selectedTemplate]);
 
   const handleUrlChange = useCallback(
     (event: React.ChangeEvent<{}>, newValue: string | null) => {
