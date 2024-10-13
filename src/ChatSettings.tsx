@@ -1,5 +1,12 @@
-import React, { useCallback } from 'react';
-import { Autocomplete, TextField, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import React, { useCallback, useState } from 'react';
+import {
+  Autocomplete,
+  TextField,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface ChatSettingsProps {
@@ -12,8 +19,6 @@ interface ChatSettingsProps {
   model: string;
   setModel: (model: string) => void;
   modelHistory: string[];
-  systemPrompt: string;
-  setSystemPrompt: (systemPrompt: string) => void;
   handleUrlConfirm: () => void;
   handleApiKeyConfirm: () => void;
   handleModelConfirm: () => void;
@@ -30,35 +35,49 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
   model,
   setModel,
   modelHistory,
-  systemPrompt,
-  setSystemPrompt,
   handleUrlConfirm,
   handleApiKeyConfirm,
   handleModelConfirm,
   isInitialLoad,
 }) => {
-  const handleUrlChange = useCallback((event: React.ChangeEvent<{}>, newValue: string | null) => {
-    if (newValue !== null) {
-      setUrl(newValue);
-    }
-  }, [setUrl]);
+  const [systemPrompt, setSystemPrompt] = useState('');
 
-  const handleApiKeyChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value;
-    setApiKey(newValue);
-  }, [setApiKey]);
+  const handleUrlChange = useCallback(
+    (event: React.ChangeEvent<{}>, newValue: string | null) => {
+      if (newValue !== null) {
+        setUrl(newValue);
+      }
+    },
+    [setUrl]
+  );
 
-  const handleModelChange = useCallback((event: React.ChangeEvent<{}>, newValue: string | null) => {
-    if (newValue !== null) {
-      setModel(newValue);
-    }
-  }, [setModel]);
+  const handleApiKeyChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = event.target.value;
+      setApiKey(newValue);
+    },
+    [setApiKey]
+  );
 
-  const handleSystemPromptChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleModelChange = useCallback(
+    (event: React.ChangeEvent<{}>, newValue: string | null) => {
+      if (newValue !== null) {
+        setModel(newValue);
+      }
+    },
+    [setModel]
+  );
+
+  const handleSystemPromptChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setSystemPrompt(event.target.value);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, confirmHandler: () => void) => {
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    confirmHandler: () => void
+  ) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       confirmHandler();
@@ -97,7 +116,9 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
             value={apiKey}
             onInputChange={(event, newValue) => {
               if (newValue !== null) {
-                handleApiKeyChange({ target: { value: newValue } } as React.ChangeEvent<HTMLInputElement>);
+                handleApiKeyChange({
+                  target: { value: newValue },
+                } as React.ChangeEvent<HTMLInputElement>);
               }
             }}
             renderInput={(params) => (

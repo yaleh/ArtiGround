@@ -13,9 +13,8 @@ const Chat: React.FC = () => {
   const [modelHistory, setModelHistory] = useState<string[]>([]);
   const [reload, setReload] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [systemPrompt, setSystemPrompt] = useState('');
 
-  const chatRef = useRef<any>(null);
+  const chatRef = useRef<typeof DeepChat>(null);
 
   useEffect(() => {
     const loadHistory = (key: string) => {
@@ -38,13 +37,46 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     setReload(prev => prev + 1);
-  }, [url, apiKey, model, systemPrompt]);
+  }, [url, apiKey, model]);
 
-  const handleNewMessage = (message: any) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
-  };
+  const handleNewMessage = useCallback((
+    body: { message: any, isHistory: boolean }
+  ) => {
+    if (body.message.role === 'user' && !body.isHistory) {
+      const systemPrompt = chatRef.current?.parentElement?.querySelector('textarea')?.value || '';
+      if (chatRef.current) {
+        chatRef.current.directConnection = {
+          openAI: {
+            key: apiKey,
+            chat: {
+              model: model,
+              system_prompt: systemPrompt
+            },
+          }
+        };
+      }
+    }
+  }, [apiKey, model]);
 
-  const updateHistory = useCallback((value: string, history: string[], setHistory: React.Dispatch<React.SetStateAction<string[]>>, key: string) => {
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.directConnection = {
+        openAI: {
+          key: apiKey,
+          chat: {
+            model: model,
+          },
+        }
+      };
+    }
+  }, [apiKey, model]);
+
+  const updateHistory = useCallback((
+    value: string, 
+    history: string[], 
+    setHistory: React.Dispatch<React.SetStateAction<string[]>>, 
+    key: string
+  ) => {
     if (value && !isInitialLoad) {
       const updatedHistory = Array.from(new Set([value, ...history])).slice(0, 10);
       setHistory(updatedHistory);
@@ -82,8 +114,6 @@ const Chat: React.FC = () => {
         model={model}
         setModel={setModel}
         modelHistory={modelHistory}
-        systemPrompt={systemPrompt}
-        setSystemPrompt={setSystemPrompt}
         handleUrlConfirm={handleUrlConfirm}
         handleApiKeyConfirm={handleApiKeyConfirm}
         handleModelConfirm={handleModelConfirm}
@@ -98,18 +128,42 @@ const Chat: React.FC = () => {
             openAI: {
               key: apiKey,
               chat: {
-                model: model,
-                system_prompt: systemPrompt
+                model: model
               },
             }
           }}
           connect={{ url: url }}
-          style={{ borderRadius: '8px', width: '100%', height: '100%' }}
+          style={{ borderRadius: '4px', width: '100%', height: '100%' }}
           messageStyles={{
             default: {
-              shared: { bubble: { backgroundColor: '#f0f0f0', padding: '8px' } },
-            },
+              shared: {
+                bubble: {
+                  maxWidth: '100%',
+                  backgroundColor: 'unset',
+                  marginTop: '10px',
+                  marginBottom: '10px'
+                }
+              },
+              user: {
+                bubble: {
+                  marginLeft: '0px',
+                  color: 'black'
+                }
+              },
+              ai: {
+                outerContainer: {
+                  backgroundColor: 'rgba(247,247,248)',
+                  borderTop: '1px solid rgba(0,0,0,.1)',
+                  borderBottom: '1px solid rgba(0,0,0,.1)'
+                }
+              }
+            }
           }}
+          // messageStyles={{
+          //   default: {
+          //     shared: { bubble: { backgroundColor: '#f0f0f0', padding: '8px' } },
+          //   },
+          // }}
           textInput={{ placeholder: { text: 'Ask about the code...' } }}
           submitButtonStyles={{
             submit: { container: { default: { backgroundColor: '#007bff' } } },
