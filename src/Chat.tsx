@@ -4,6 +4,8 @@ import { Button, Box } from '@mui/material';
 import ChatSettings from './ChatSettings';
 import { useSystemPrompt, SystemPromptProvider } from './SystemPromptContext';
 import { updateHistory } from './utils/historyUtils';
+import { interceptRequest } from './utils/requestInterceptor';
+import { processResponseArtifacts } from './utils/responseInterceptor';
 
 const ChatContent: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -75,12 +77,24 @@ const ChatContent: React.FC = () => {
   };
 
   const handleRequestInterceptor = useCallback((requestDetails: any) => {
-    if (requestDetails.body && requestDetails.body.messages) {
-      const systemMessage = { role: "system", content: systemPrompt };
-      requestDetails.body.messages = [systemMessage, ...requestDetails.body.messages];
-    }
-    return requestDetails;
+    return interceptRequest(systemPrompt, requestDetails);
   }, [systemPrompt]);
+
+  const handleResponseInterceptor = useCallback((response: any) => {
+    if (response && response.choices && Array.isArray(response.choices)) {
+      return {
+        ...response,
+        choices: response.choices.map((choice: any) => ({
+          ...choice,
+          message: {
+            ...choice.message,
+            content: processResponseArtifacts(choice.message.content)
+          }
+        }))
+      };
+    }
+    return response;
+  }, []);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -144,6 +158,7 @@ const ChatContent: React.FC = () => {
             submit: { container: { default: { backgroundColor: '#007bff' } } },
           }}
           requestInterceptor={handleRequestInterceptor}
+          responseInterceptor={handleResponseInterceptor}
           demo={true}
         />
       </Box>
