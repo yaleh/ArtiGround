@@ -18,7 +18,7 @@ const ChatContent: React.FC = () => {
   const [reload, setReload] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  const chatRef = useRef<typeof DeepChat>(null);
+  const chatRef = useRef<any>(null);
 
   const { systemPrompt } = useSystemPrompt();
 
@@ -96,6 +96,24 @@ const ChatContent: React.FC = () => {
     return response;
   }, []);
 
+  const handleGetSandpackFiles = () => {
+    if (typeof window !== 'undefined' && (window as any).sandpackController) {
+      const files = (window as any).sandpackController.getFiles();
+      const fileList = Object.keys(files)
+        .map(path => `- ${path}`)
+        .join('\n');
+      
+      if (chatRef.current) {
+        chatRef.current.addMessage({
+          text: `Project Files:\n${fileList}`,
+          role: 'user'
+        });
+      }
+    } else {
+      console.error('Sandpack controller not available');
+    }
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <ChatSettings
@@ -162,14 +180,23 @@ const ChatContent: React.FC = () => {
           demo={true}
         />
       </Box>
-      <Button 
-        variant="contained" 
-        color="inherit"
-        onClick={handleClearChat}
-        sx={{ mt: 1, backgroundColor: 'grey.400' }}
-      >
-        Reset Chat
-      </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+        <Button 
+          variant="contained" 
+          color="inherit"
+          onClick={handleClearChat}
+          sx={{ backgroundColor: 'grey.400' }}
+        >
+          Reset Chat
+        </Button>
+        <Button 
+          variant="contained" 
+          color="primary"
+          onClick={handleGetSandpackFiles}
+        >
+          Get Sandpack Files
+        </Button>
+      </Box>
     </Box>
   );
 };

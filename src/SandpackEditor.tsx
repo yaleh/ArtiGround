@@ -3,6 +3,7 @@ import { Sandpack, SandpackProvider, SandpackLayout, SandpackCodeEditor, Sandpac
 import { SandpackFileExplorer } from 'sandpack-file-explorer';
 import { useTemplate } from './TemplateContext';
 import { useTheme, useMediaQuery, Box } from '@mui/material';
+import { SandpackController } from './SandpackController';
 
 const SandpackEditor: React.FC = () => {
   const { selectedTemplate } = useTemplate();
@@ -81,6 +82,7 @@ const SandpackEditor: React.FC = () => {
           </Box>
         </SandpackLayout>
       </Box>
+      <SandpackController />
     </SandpackProvider>
   );
 };
