@@ -5,7 +5,7 @@ import ChatSettings from './ChatSettings';
 import { useSystemPrompt, SystemPromptProvider } from './SystemPromptContext';
 import { updateHistory } from './utils/historyUtils';
 import { interceptRequest } from './utils/requestInterceptor';
-import { processResponseArtifacts } from './utils/responseInterceptor';
+import { processResponseArtifacts, Artifact } from './utils/responseInterceptor';
 
 const ChatContent: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -97,13 +97,25 @@ const ChatContent: React.FC = () => {
     if (response && response.choices && Array.isArray(response.choices)) {
       return {
         ...response,
-        choices: response.choices.map((choice: any) => ({
-          ...choice,
-          message: {
-            ...choice.message,
-            content: processResponseArtifacts(choice.message.content)
+        choices: response.choices.map((choice: any) => {
+          const { modifiedText, artifacts } = processResponseArtifacts(choice.message.content);
+          
+          // Update files using SandpackController
+          if (artifacts.length > 0 && typeof window !== 'undefined' && (window as any).sandpackController) {
+            artifacts.forEach((artifact: Artifact) => {
+              (window as any).sandpackController.updateFile(artifact.filepath, artifact.content);
+            });
           }
-        }))
+
+          return {
+            ...choice,
+            message: {
+              ...choice.message,
+              content: modifiedText,
+              artifacts: artifacts
+            }
+          };
+        })
       };
     }
     return response;

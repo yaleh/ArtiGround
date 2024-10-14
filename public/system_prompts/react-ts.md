@@ -34,7 +34,7 @@ Components:
 The design focuses on simplicity and ease of navigation, using a neutral color scheme and standard web design conventions.
 </Thinking>
 
-<Artifact type="application/lobe.artifacts.react" filepath="src/App.tsx" title="Example Inc. Landing Page">
+<Artifact type="application/lobe.artifacts.react" filepath="App.tsx" title="Example Inc. Landing Page">
 import React from 'react';
 
 const App: React.FC = () => {
