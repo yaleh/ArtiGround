@@ -78,12 +78,18 @@ export const processResponseArtifacts = (text: string): { modifiedText: string; 
       }
     }
 
-    // Trim trailing newline from artifact content
+    // Trim trailing newline from artifact content and remove inner ```
     artifacts.forEach(artifact => {
-      artifact.content = artifact.content.trimEnd();
+      artifact.content = artifact.content.trimEnd().replace(/^```[\w-]*\n|\n```$/gm, '');
     });
 
-    return { modifiedText: finalModifiedText, artifacts };
+    // Remove inner ``` and language specifier from modifiedText
+    const cleanedModifiedText = finalModifiedText.replace(
+      /```\n```[\w-]*\n([\s\S]*?)```\n```/g,
+      '```\n$1```'
+    );
+
+    return { modifiedText: cleanedModifiedText, artifacts };
   }
   return { modifiedText: text, artifacts };
 };

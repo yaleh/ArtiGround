@@ -199,4 +199,28 @@ const E = () => <div>E</div>;
       }
     ]);
   });
+
+  it('should remove inner ``` in Artifact section', () => {
+    const text = `With attributes:
+
+<Artifact filepath="f.js" data-test="example" class="code-block">
+\`\`\`tsx
+const F = () => <div>F</div>;
+\`\`\`
+</Artifact>`;
+
+    const result = processResponseArtifacts(text);
+
+    expect(result.modifiedText).toBe(`With attributes:
+
+\`\`\`
+const F = () => <div>F</div>;
+\`\`\``);
+    expect(result.artifacts).toEqual([
+      {
+        filepath: 'f.js',
+        content: 'const F = () => <div>F</div>;'
+      }
+    ]);
+  });
 });
