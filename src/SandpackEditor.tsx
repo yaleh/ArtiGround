@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sandpack, SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, SandpackConsole } from "@codesandbox/sandpack-react";
 import { SandpackFileExplorer } from 'sandpack-file-explorer';
 import { useTemplate } from './TemplateContext';
@@ -9,6 +9,19 @@ const SandpackEditor: React.FC = () => {
   const { selectedTemplate } = useTemplate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [fileExplorerKey, setFileExplorerKey] = useState(0);
+
+  useEffect(() => {
+    const handleFileUpdate = () => {
+      setFileExplorerKey(prev => prev + 1);
+    };
+
+    window.addEventListener('sandpack-file-update', handleFileUpdate);
+
+    return () => {
+      window.removeEventListener('sandpack-file-update', handleFileUpdate);
+    };
+  }, []);
 
   return (
     <SandpackProvider
@@ -42,7 +55,7 @@ const SandpackEditor: React.FC = () => {
                 height: isMobile ? '200px' : '100%',
                 overflow: 'hidden'
               }}>
-                <SandpackFileExplorer />
+                <SandpackFileExplorer key={fileExplorerKey} />
               </Box>
               <Box sx={{
                 display: 'flex',

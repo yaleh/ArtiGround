@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSandpack } from "@codesandbox/sandpack-react";
 
 export const SandpackController: React.FC = () => {
   const { sandpack, listen } = useSandpack();
+  const [fileUpdateTrigger, setFileUpdateTrigger] = useState(0);
 
   useEffect(() => {
     // Use the listen function directly from useSandpack
     const unsubscribe = listen((message) => {
-      if (message.type === "file" && message.event === "change") {
-        console.log("File changed:", message.filePath);
+      if (message.type === "start" && message.codesandbox === true) {
+        console.log("Sandpack started:", message.$id);
+        // Trigger a re-render of SandpackFileExplorer
+        setFileUpdateTrigger(prev => prev + 1);
+        // Dispatch custom event
+        window.dispatchEvent(new Event('sandpack-file-update'));
       }
     });
 
@@ -24,6 +29,10 @@ export const SandpackController: React.FC = () => {
 
   const updateFile = (path: string, code: string) => {
     sandpack.updateFile(path, code);
+    // Trigger a re-render of SandpackFileExplorer
+    setFileUpdateTrigger(prev => prev + 1);
+    // Dispatch custom event
+    window.dispatchEvent(new Event('sandpack-file-update'));
   };
 
   // Add this method to the global window object
