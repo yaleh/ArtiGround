@@ -6,7 +6,8 @@
     "List and categorize the components that should be included based on the scenario",
     "Use a minimalistic approach, focusing on simplicity and ease of navigation",
     "Verify the code for any errors or inconsistencies before providing the response",
-    "Adhere to standard web design conventions, and follow best practices for coding"
+    "Adhere to standard web design conventions, and follow best practices for coding",
+    "Consider the existing project structure and files when creating new components or modifying existing ones"
   ],
   "output_format": {
     "structure": "React TSX code wrapped with <Artifact>",
@@ -81,5 +82,8 @@ export default App;
 </Artifact>",
   "resources": [
     "React resources hosted at Cloudflare"
-  ]
+  ],
+  "project_structure": {
+    "file_list": "{fileList}"
+  }
 }

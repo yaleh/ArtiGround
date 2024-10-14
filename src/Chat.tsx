@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { DeepChat } from 'deep-chat-react';
 import { Button, Box } from '@mui/material';
 import ChatSettings from './ChatSettings';
@@ -17,6 +17,7 @@ const ChatContent: React.FC = () => {
   const [modelHistory, setModelHistory] = useState<string[]>([]);
   const [reload, setReload] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [fileList, setFileList] = useState<string[]>([]);
 
   const chatRef = useRef<any>(null);
 
@@ -44,6 +45,18 @@ const ChatContent: React.FC = () => {
   useEffect(() => {
     setReload(prev => prev + 1);
   }, [url, apiKey, model]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window as any).sandpackController) {
+      const files = (window as any).sandpackController.getFiles();
+      const paths = Object.keys(files);
+      setFileList(paths);
+    }
+  }, []);
+
+  const variables = useMemo(() => ({
+    fileList: JSON.stringify(fileList)
+  }), [fileList]);
 
   const handleUpdateHistory = useCallback((
     value: string, 
@@ -77,8 +90,8 @@ const ChatContent: React.FC = () => {
   };
 
   const handleRequestInterceptor = useCallback((requestDetails: any) => {
-    return interceptRequest(systemPrompt, requestDetails);
-  }, [systemPrompt]);
+    return interceptRequest(systemPrompt, requestDetails, variables);
+  }, [systemPrompt, variables]);
 
   const handleResponseInterceptor = useCallback((response: any) => {
     if (response && response.choices && Array.isArray(response.choices)) {
