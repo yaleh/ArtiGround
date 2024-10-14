@@ -3,7 +3,10 @@ export interface Artifact {
   content: string;
 }
 
-export const processResponseArtifacts = (text: string): { modifiedText: string; artifacts: Artifact[] } => {
+export const processResponseArtifacts = (
+  text: string,
+  modifyResponse: boolean = false
+): { modifiedText: string; artifacts: Artifact[] } => {
   const artifacts: Artifact[] = [];
   let currentArtifact: Artifact | null = null;
 
@@ -23,20 +26,24 @@ export const processResponseArtifacts = (text: string): { modifiedText: string; 
               currentArtifact = { filepath: filepathMatch[1], content: '' };
               artifacts.push(currentArtifact);
             }
-            let result = prevChar !== '\n' ? '\n' : '';
-            result += '```';
-            result += nextChar !== '\n' ? '\n' : '';
-            return result;
+            if (modifyResponse) {
+              let result = prevChar !== '\n' ? '\n' : '';
+              result += '```';
+              result += nextChar !== '\n' ? '\n' : '';
+              return result;
+            }
           }
           return match;
         } else if (closeTag) {
           if (depth === 1) {
             currentArtifact = null;
-            let result = prevChar !== '\n' ? '\n' : '';
-            result += '```';
-            result += nextChar !== '\n' ? '\n' : '';
-            depth--;
-            return result;
+            if (modifyResponse) {
+              let result = prevChar !== '\n' ? '\n' : '';
+              result += '```';
+              result += nextChar !== '\n' ? '\n' : '';
+              depth--;
+              return result;
+            }
           }
           depth--;
           return match;
@@ -45,7 +52,9 @@ export const processResponseArtifacts = (text: string): { modifiedText: string; 
     );
     
     // Handle empty artifacts
-    const finalModifiedText = modifiedText.replace(/```\s*```/g, '```\n```');
+    const finalModifiedText = modifyResponse
+      ? modifiedText.replace(/```\s*```/g, '```\n```')
+      : modifiedText;
 
     // Extract artifact content
     const lines = text.split('\n');
@@ -84,10 +93,12 @@ export const processResponseArtifacts = (text: string): { modifiedText: string; 
     });
 
     // Remove inner ``` and language specifier from modifiedText
-    const cleanedModifiedText = finalModifiedText.replace(
-      /```\n```[\w-]*\n([\s\S]*?)```\n```/g,
-      '```\n$1```'
-    );
+    const cleanedModifiedText = modifyResponse
+      ? finalModifiedText.replace(
+          /```\n```[\w-]*\n([\s\S]*?)```\n```/g,
+          '```\n$1```'
+        )
+      : finalModifiedText;
 
     return { modifiedText: cleanedModifiedText, artifacts };
   }

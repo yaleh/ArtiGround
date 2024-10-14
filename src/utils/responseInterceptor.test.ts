@@ -9,7 +9,7 @@ const Example = () => {
 };
 </Artifact>`;
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toBe(`Here is some code: 
 \`\`\`
@@ -33,7 +33,7 @@ Second block: <Artifact filepath="b.js">
 const B = () => <div>B</div>;
 </Artifact>`;
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toBe(`First block: 
 \`\`\`
@@ -58,7 +58,7 @@ const B = () => <div>B</div>;
   it('should not modify text without Artifact tags', () => {
     const text = 'This is a regular response without any code blocks.';
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toEqual(text);
     expect(result.artifacts).toEqual([]);
@@ -67,7 +67,7 @@ const B = () => <div>B</div>;
   it('should return the original response if there is no text property', () => {
     const text = undefined;
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toEqual(text);
     expect(result.artifacts).toEqual([]);
@@ -76,7 +76,7 @@ const B = () => <div>B</div>;
   it('should handle empty Artifact tags', () => {
     const text = 'Empty block: <Artifact filepath="empty.txt"></Artifact>';
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toBe(`Empty block: 
 \`\`\`
@@ -96,7 +96,7 @@ const C = () => <div>C</div>;
 </Artifact>
 More text`;
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toBe(`Some text
 \`\`\`
@@ -122,7 +122,7 @@ const D = () => <div>D</div>;
 const y = 2;
 \`\`\``;
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toBe(`Here is a code block:
 
@@ -153,7 +153,7 @@ const Outer = () => (
 );
 </Artifact>`;
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toBe(`Nested tags: 
 \`\`\`
@@ -186,7 +186,7 @@ const Outer = () => (
 const E = () => <div>E</div>;
 </Artifact>`;
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toBe(`With attributes: 
 \`\`\`
@@ -209,7 +209,7 @@ const F = () => <div>F</div>;
 \`\`\`
 </Artifact>`;
 
-    const result = processResponseArtifacts(text);
+    const result = processResponseArtifacts(text, true);
 
     expect(result.modifiedText).toBe(`With attributes:
 
@@ -220,6 +220,101 @@ const F = () => <div>F</div>;
       {
         filepath: 'f.js',
         content: 'const F = () => <div>F</div>;'
+      }
+    ]);
+  });
+});
+
+describe('processResponseArtifacts with modifyResponse false', () => {
+  it('should not modify text but still extract artifacts', () => {
+    const text = `Here is some code: <Artifact filepath="example.js">
+const Example = () => {
+  return <div>Hello</div>;
+};
+</Artifact>`;
+
+    const result = processResponseArtifacts(text, false);
+
+    expect(result.modifiedText).toBe(text);
+    expect(result.artifacts).toEqual([
+      {
+        filepath: 'example.js',
+        content: 'const Example = () => {\n  return <div>Hello</div>;\n};'
+      }
+    ]);
+  });
+
+  it('should handle multiple Artifact blocks without modifying text', () => {
+    const text = `First block: <Artifact filepath="a.js">
+const A = () => <div>A</div>;
+</Artifact>
+Second block: <Artifact filepath="b.js">
+const B = () => <div>B</div>;
+</Artifact>`;
+
+    const result = processResponseArtifacts(text, false);
+
+    expect(result.modifiedText).toBe(text);
+    expect(result.artifacts).toEqual([
+      {
+        filepath: 'a.js',
+        content: 'const A = () => <div>A</div>;'
+      },
+      {
+        filepath: 'b.js',
+        content: 'const B = () => <div>B</div>;'
+      }
+    ]);
+  });
+
+  it('should not modify text with Markdown code blocks', () => {
+    const text = `Here is a code block:
+
+\`\`\`javascript
+const x = 1;
+<Artifact filepath="d.js">
+const D = () => <div>D</div>;
+</Artifact>
+const y = 2;
+\`\`\``;
+
+    const result = processResponseArtifacts(text, false);
+
+    expect(result.modifiedText).toBe(text);
+    expect(result.artifacts).toEqual([
+      {
+        filepath: 'd.js',
+        content: 'const D = () => <div>D</div>;'
+      }
+    ]);
+  });
+
+  it('should not modify nested Artifact tags', () => {
+    const text = `Nested tags: <Artifact filepath="outer.js">
+const Outer = () => (
+  <div>
+    <Artifact filepath="inner.js">
+    const Inner = () => <span>Inner</span>;
+    </Artifact>
+    <Inner />
+  </div>
+);
+</Artifact>`;
+
+    const result = processResponseArtifacts(text, false);
+
+    expect(result.modifiedText).toBe(text);
+    expect(result.artifacts).toEqual([
+      {
+        filepath: 'outer.js',
+        content: `const Outer = () => (
+  <div>
+    <Artifact filepath="inner.js">
+    const Inner = () => <span>Inner</span>;
+    </Artifact>
+    <Inner />
+  </div>
+);`
       }
     ]);
   });
