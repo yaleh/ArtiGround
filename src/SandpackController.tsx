@@ -9,7 +9,7 @@ export const SandpackController: React.FC = () => {
     // Use the listen function directly from useSandpack
     const unsubscribe = listen((message) => {
       if (message.type === "start" && message.codesandbox === true) {
-        console.log("Sandpack started:", message.$id);
+        // console.log("Sandpack started:", message.$id);
         // Trigger a re-render of SandpackFileExplorer
         setFileUpdateTrigger(prev => prev + 1);
         // Dispatch custom event
