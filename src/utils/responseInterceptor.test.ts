@@ -223,6 +223,50 @@ const F = () => <div>F</div>;
       }
     ]);
   });
+
+  it('should handle Thinking tags and Artifact tags with additional attributes', () => {
+    const text = `<Thinking>
+The error message "TypeError: Cannot read properties of undefined (reading 'setLocalizer')" suggests that the \`Calendar\` component from \`react-big-calendar\` is being used before it's fully initialized. This is likely happening because the \`setLocalizer\` method is being called at the top level of the file, outside of a component lifecycle method.
+</Thinking>
+
+<Artifact type="application/artifacts.react" filepath="App.tsx" title="日历应用">
+\`\`\`tsx
+import React, { useState } from 'react';
+import Calendar from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+const App: React.FC = () => {}
+export default App;
+\`\`\`
+</Artifact>`;
+
+    const result = processResponseArtifacts(text, true);
+
+    expect(result.modifiedText).toBe(`<Thinking>
+The error message "TypeError: Cannot read properties of undefined (reading 'setLocalizer')" suggests that the \`Calendar\` component from \`react-big-calendar\` is being used before it's fully initialized. This is likely happening because the \`setLocalizer\` method is being called at the top level of the file, outside of a component lifecycle method.
+</Thinking>
+
+\`\`\`
+import React, { useState } from 'react';
+import Calendar from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+const App: React.FC = () => {}
+export default App;
+\`\`\``);
+
+    expect(result.artifacts).toEqual([
+      {
+        filepath: 'App.tsx',
+        content: `import React, { useState } from 'react';
+import Calendar from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+const App: React.FC = () => {}
+export default App;`
+      }
+    ]);
+  });
 });
 
 describe('processResponseArtifacts with modifyResponse false', () => {
