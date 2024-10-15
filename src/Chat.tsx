@@ -10,6 +10,10 @@ import { useArtiGround } from './ArtiGroundContext';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ErrorIcon from '@mui/icons-material/Error';
 import UndoIcon from '@mui/icons-material/Undo';
+// Add this import
+import DownloadIcon from '@mui/icons-material/Download';
+// Add this import for JSZip
+import JSZip from 'jszip';
 
 const ChatContent: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -213,6 +217,32 @@ const ChatContent: React.FC = () => {
     }
   }, []);
 
+  // Update this function to automatically trigger the download
+  const handleDownloadFiles = useCallback(() => {
+    if (sandpackController) {
+      const files = sandpackController.getFiles();
+      const zip = new JSZip();
+
+      Object.entries(files).forEach(([path, content]) => {
+        const fileContent = typeof content === 'string' ? content : JSON.stringify(content);
+        zip.file(path, fileContent);
+      });
+
+      zip.generateAsync({ type: "blob" }).then((content) => {
+        const url = window.URL.createObjectURL(content);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'project_files.zip';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }).catch((error) => {
+        console.error('Error generating zip file:', error);
+      });
+    }
+  }, [sandpackController]);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <ChatSettings
@@ -305,6 +335,15 @@ const ChatContent: React.FC = () => {
           disabled={!hasMessages}
         >
           <UndoIcon />
+        </Button>
+        {/* Add this new button */}
+        <Button 
+          variant="contained" 
+          color="primary"
+          onClick={handleDownloadFiles}
+          disabled={!sandpackController}
+        >
+          <DownloadIcon />
         </Button>
       </Box>
     </Box>
