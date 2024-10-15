@@ -4,12 +4,14 @@ import { SandpackFileExplorer } from 'sandpack-file-explorer';
 import { useTemplate } from './TemplateContext';
 import { useTheme, useMediaQuery, Box } from '@mui/material';
 import { SandpackController } from './SandpackController';
+import { useArtiGround } from './ArtiGroundContext';
 
 const SandpackEditor: React.FC = () => {
   const { selectedTemplate } = useTemplate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [fileExplorerKey, setFileExplorerKey] = useState(0);
+  const { setLogs } = useArtiGround();
 
   useEffect(() => {
     const handleFileUpdate = () => {
@@ -24,7 +26,7 @@ const SandpackEditor: React.FC = () => {
   }, []);
 
   const handleLogsChange = (logs: SandpackConsoleData) => {
-    console.log("Sandpack Console Logs:", logs);
+    setLogs(logs);
   };
 
   return (

@@ -6,6 +6,7 @@ import { useSystemPrompt, SystemPromptProvider } from './SystemPromptContext';
 import { updateHistory } from './utils/historyUtils';
 import { interceptRequest } from './utils/requestInterceptor';
 import { processResponseArtifacts, Artifact } from './utils/responseInterceptor';
+import { useArtiGround } from './ArtiGroundContext';
 
 const ChatContent: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -18,6 +19,7 @@ const ChatContent: React.FC = () => {
   const [reload, setReload] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [fileList, setFileList] = useState<string[]>([]);
+  const { logs } = useArtiGround();
 
   const chatRef = useRef<any>(null);
 
@@ -53,6 +55,10 @@ const ChatContent: React.FC = () => {
       setFileList(paths);
     }
   }, []);
+
+  useEffect(() => {
+    console.log("Sandpack Console Logs:", logs);
+  }, [logs]);
 
   const variables = useMemo(() => ({
     fileList: JSON.stringify(fileList)

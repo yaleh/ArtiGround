@@ -12,6 +12,7 @@ import SandpackEditor from './SandpackEditor';
 import Chat from './Chat';
 import { TemplateProvider } from './TemplateContext';
 import TemplateSelector from './TemplateSelector';
+import { ArtiGroundProvider } from './ArtiGroundContext';
 
 const theme = createTheme();
 
@@ -22,36 +23,38 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <TemplateProvider>
-        <Box sx={{
-          display: 'flex', 
-          flexDirection: 'column', 
-          height: '100vh'
-        }}>
-          <AppBar position="static">
-            <Toolbar>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                ChatGround
-              </Typography>
-              <TemplateSelector />
-            </Toolbar>
-          </AppBar>
-          <Container maxWidth={false} sx={{ 
-            flexGrow: 1, 
+        <ArtiGroundProvider>
+          <Box sx={{
             display: 'flex', 
             flexDirection: 'column', 
-            overflow: isMobile ? 'auto' : 'hidden', 
-            py: 2 
+            height: '100vh'
           }}>
-            <Grid container spacing={2} sx={{ flexGrow: 1, height: '100%' }}>
-              <Grid item xs={12} md={4} lg={3} sx={{ height: isMobile ? 'auto' : '100%', minHeight: isMobile ? '300px' : 'auto' }}>
-                <Chat />
+            <AppBar position="static">
+              <Toolbar>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                  ChatGround
+                </Typography>
+                <TemplateSelector />
+              </Toolbar>
+            </AppBar>
+            <Container maxWidth={false} sx={{ 
+              flexGrow: 1, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              overflow: isMobile ? 'auto' : 'hidden', 
+              py: 2 
+            }}>
+              <Grid container spacing={2} sx={{ flexGrow: 1, height: '100%' }}>
+                <Grid item xs={12} md={4} lg={3} sx={{ height: isMobile ? 'auto' : '100%', minHeight: isMobile ? '300px' : 'auto' }}>
+                  <Chat />
+                </Grid>
+                <Grid item xs={12} md={8} lg={9} sx={{ height: isMobile ? 'auto' : '100%' }}>
+                  <SandpackEditor />
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={8} lg={9} sx={{ height: isMobile ? 'auto' : '100%' }}>
-                <SandpackEditor />
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
+            </Container>
+          </Box>
+        </ArtiGroundProvider>
       </TemplateProvider>
     </ThemeProvider>
   );
