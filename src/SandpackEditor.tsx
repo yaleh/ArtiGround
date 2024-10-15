@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sandpack, SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, SandpackConsole } from "@codesandbox/sandpack-react";
+import { Sandpack, SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, SandpackConsole, SandpackConsoleData } from "@codesandbox/sandpack-react";
 import { SandpackFileExplorer } from 'sandpack-file-explorer';
 import { useTemplate } from './TemplateContext';
 import { useTheme, useMediaQuery, Box } from '@mui/material';
@@ -22,6 +22,10 @@ const SandpackEditor: React.FC = () => {
       window.removeEventListener('sandpack-file-update', handleFileUpdate);
     };
   }, []);
+
+  const handleLogsChange = (logs: SandpackConsoleData) => {
+    console.log("Sandpack Console Logs:", logs);
+  };
 
   return (
     <SandpackProvider
@@ -90,7 +94,10 @@ const SandpackEditor: React.FC = () => {
                 style={{
                   height: '100%',
                 }}
-              />
+                onLogsChange={handleLogsChange}
+              >
+                {/* <SandpackConsoleController /> */}
+              </SandpackConsole>
             </Box>
           </Box>
         </SandpackLayout>
