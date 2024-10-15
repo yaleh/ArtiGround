@@ -11,7 +11,7 @@ const SandpackEditor: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [fileExplorerKey, setFileExplorerKey] = useState(0);
-  const { setLogs } = useArtiGround();
+  const { setLogs, setSandpackController } = useArtiGround();
 
   useEffect(() => {
     const handleFileUpdate = () => {
@@ -104,7 +104,7 @@ const SandpackEditor: React.FC = () => {
           </Box>
         </SandpackLayout>
       </Box>
-      <SandpackController />
+      <SandpackController setSandpackController={setSandpackController} />
     </SandpackProvider>
   );
 };

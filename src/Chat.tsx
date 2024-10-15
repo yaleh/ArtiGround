@@ -7,6 +7,9 @@ import { updateHistory } from './utils/historyUtils';
 import { interceptRequest } from './utils/requestInterceptor';
 import { processResponseArtifacts, Artifact } from './utils/responseInterceptor';
 import { useArtiGround } from './ArtiGroundContext';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ErrorIcon from '@mui/icons-material/Error';
+import UndoIcon from '@mui/icons-material/Undo';
 
 const ChatContent: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -19,7 +22,10 @@ const ChatContent: React.FC = () => {
   const [reload, setReload] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [fileList, setFileList] = useState<string[]>([]);
-  const { logs } = useArtiGround();
+  const { logs, sandpackController } = useArtiGround();
+  const [lastError, setLastError] = useState<string | null>(null);
+  const [isErrorButtonEnabled, setIsErrorButtonEnabled] = useState(false);
+  const [hasMessages, setHasMessages] = useState(false);
 
   const chatRef = useRef<any>(null);
 
@@ -49,15 +55,27 @@ const ChatContent: React.FC = () => {
   }, [url, apiKey, model]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && (window as any).sandpackController) {
-      const files = (window as any).sandpackController.getFiles();
+    if (sandpackController) {
+      const files = sandpackController.getFiles();
       const paths = Object.keys(files);
       setFileList(paths);
     }
-  }, []);
+  }, [sandpackController]);
 
   useEffect(() => {
-    console.log("Sandpack Console Logs:", logs);
+    if (Array.isArray(logs)) {
+      const lastErrorLog = logs
+        .filter(log => log.method === "error")
+        .pop();
+      
+      if (lastErrorLog && lastErrorLog.data && lastErrorLog.data[0]) {
+        console.log("Last Error:", lastErrorLog.data[0]);
+        setLastError(lastErrorLog.data[0]);
+        setIsErrorButtonEnabled(true);
+      }
+    } else {
+      console.warn("logs is not an array:", logs);
+    }
   }, [logs]);
 
   const variables = useMemo(() => ({
@@ -92,10 +110,14 @@ const ChatContent: React.FC = () => {
   const handleClearChat = () => {
     if (chatRef.current) {
       chatRef.current.clearMessages();
+      setIsErrorButtonEnabled(false);
+      setHasMessages(false);
     }
   };
 
   const handleRequestInterceptor = useCallback((requestDetails: any) => {
+    setIsErrorButtonEnabled(false);
+    setHasMessages(true);
     return interceptRequest(systemPrompt, requestDetails, variables);
   }, [systemPrompt, variables]);
 
@@ -107,9 +129,9 @@ const ChatContent: React.FC = () => {
           const { modifiedText, artifacts } = processResponseArtifacts(choice.message.content);
           
           // Update files using SandpackController
-          if (artifacts.length > 0 && typeof window !== 'undefined' && (window as any).sandpackController) {
+          if (artifacts.length > 0 && sandpackController) {
             artifacts.forEach((artifact: Artifact) => {
-              (window as any).sandpackController.updateFile(artifact.filepath, artifact.content);
+              sandpackController.updateFile(artifact.filepath, artifact.content);
             });
           }
 
@@ -125,11 +147,11 @@ const ChatContent: React.FC = () => {
       };
     }
     return response;
-  }, []);
+  }, [sandpackController]);
 
   const handleGetSandpackFiles = () => {
-    if (typeof window !== 'undefined' && (window as any).sandpackController) {
-      const files = (window as any).sandpackController.getFiles();
+    if (sandpackController) {
+      const files = sandpackController.getFiles();
       const fileList = Object.keys(files)
         .map(path => `- ${path}`)
         .join('\n');
@@ -144,6 +166,52 @@ const ChatContent: React.FC = () => {
       console.error('Sandpack controller not available');
     }
   };
+
+  const handleAddErrorToChat = () => {
+    if (lastError && chatRef.current) {
+      chatRef.current.addMessage({
+        text: `Last Error: ${lastError}`,
+        role: 'user'
+      });
+      setIsErrorButtonEnabled(false);
+    }
+  };
+
+  const handleRevokeLastMessage = () => {
+    if (chatRef.current) {
+      const messages = chatRef.current.getMessages();
+      if (messages.length > 0) {
+        const lastMessage = messages.pop();
+        chatRef.current.clearMessages(true);
+        messages.forEach(message => chatRef.current.addMessage(message));
+
+        if (lastMessage.role === 'user' && lastMessage.text) {
+          setInputText(lastMessage.text);
+        }
+
+        setIsErrorButtonEnabled(false);
+        setHasMessages(messages.length > 0);
+      }
+    }
+  };
+
+  const setInputText = useCallback((text: string) => {
+    if (chatRef.current) {
+      // Wait for the next tick to ensure the shadow DOM is fully rendered
+      setTimeout(() => {
+        const shadowRoot = chatRef.current.shadowRoot;
+        const inputElement = shadowRoot?.querySelector('#text-input') as HTMLDivElement | null;
+        if (inputElement) {
+          inputElement.textContent = text;
+          // Trigger an input event to ensure DeepChat's internal state is updated
+          const event = new Event('input', { bubbles: true });
+          inputElement.dispatchEvent(event);
+        } else {
+          console.error('Could not find the input element');
+        }
+      }, 0);
+    }
+  }, []);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -209,6 +277,7 @@ const ChatContent: React.FC = () => {
           requestInterceptor={handleRequestInterceptor}
           responseInterceptor={handleResponseInterceptor}
           demo={true}
+          onNewMessage={() => setHasMessages(true)}
         />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
@@ -217,15 +286,25 @@ const ChatContent: React.FC = () => {
           color="inherit"
           onClick={handleClearChat}
           sx={{ backgroundColor: 'grey.400' }}
+          disabled={!hasMessages}
         >
-          Reset Chat
+          <DeleteIcon />
         </Button>
         <Button 
           variant="contained" 
-          color="primary"
-          onClick={handleGetSandpackFiles}
+          color="secondary"
+          onClick={handleAddErrorToChat}
+          disabled={!isErrorButtonEnabled}
         >
-          Get Sandpack Files
+          <ErrorIcon />
+        </Button>
+        <Button 
+          variant="contained" 
+          color="warning"
+          onClick={handleRevokeLastMessage}
+          disabled={!hasMessages}
+        >
+          <UndoIcon />
         </Button>
       </Box>
     </Box>
