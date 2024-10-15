@@ -118,8 +118,8 @@ const ChatContent: React.FC = () => {
   const handleRequestInterceptor = useCallback((requestDetails: any) => {
     setIsErrorButtonEnabled(false);
     setHasMessages(true);
-    return interceptRequest(systemPrompt, requestDetails, variables);
-  }, [systemPrompt, variables]);
+    return interceptRequest(systemPrompt, requestDetails, variables, sandpackController);
+  }, [systemPrompt, variables, sandpackController]);
 
   const handleResponseInterceptor = useCallback((response: any) => {
     if (response && response.choices && Array.isArray(response.choices)) {
