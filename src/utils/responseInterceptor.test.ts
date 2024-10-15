@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { processResponseArtifacts, Artifact } from './responseInterceptor';
+import { processResponseArtifacts } from './responseInterceptor';
 
 describe('processResponseArtifacts', () => {
   it('should replace Artifact tags with Markdown code block symbols and extract artifacts', () => {
@@ -65,7 +65,7 @@ const B = () => <div>B</div>;
   });
 
   it('should return the original response if there is no text property', () => {
-    const text = undefined;
+    const text = '';
 
     const result = processResponseArtifacts(text, true);
 

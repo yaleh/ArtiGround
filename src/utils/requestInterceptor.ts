@@ -13,7 +13,7 @@ export const interceptRequest = (systemPrompt: string, requestDetails: any, vari
     );
 
     // Find the index of the last user message
-    const lastUserIndex = filteredMessages.map(m => m.role).lastIndexOf('user');
+    const lastUserIndex = filteredMessages.map((m: any) => m.role).lastIndexOf('user');
     
     // Insert the system message before the last user message
     if (lastUserIndex !== -1) {

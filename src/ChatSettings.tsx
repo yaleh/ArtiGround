@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   Autocomplete,
   TextField,
@@ -53,7 +53,6 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
   handleUrlConfirm,
   handleApiKeyConfirm,
   handleModelConfirm,
-  isInitialLoad,
 }) => {
   const { selectedTemplate } = useTemplate();
   const { systemPrompt, setSystemPrompt } = useSystemPrompt();
@@ -80,7 +79,7 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
   }, [selectedTemplate, setSystemPrompt]);
 
   const handleUrlChange = useCallback(
-    (event: React.ChangeEvent<{}>, newValue: string | null) => {
+    (_event: React.ChangeEvent<{}>, newValue: string | null) => {
       if (newValue !== null) {
         setUrl(newValue);
       }
@@ -97,7 +96,7 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
   );
 
   const handleModelChange = useCallback(
-    (event: React.ChangeEvent<{}>, newValue: string | null) => {
+    (_event: React.ChangeEvent<{}>, newValue: string | null) => {
       if (newValue !== null) {
         setModel(newValue);
       }
@@ -151,7 +150,7 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
             freeSolo
             options={apiKeyHistory}
             value={apiKey}
-            onInputChange={(event, newValue) => {
+            onInputChange={(_event, newValue) => {
               if (newValue !== null) {
                 handleApiKeyChange({
                   target: { value: newValue },

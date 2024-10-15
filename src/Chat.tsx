@@ -16,7 +16,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import JSZip from 'jszip';
 
 const ChatContent: React.FC = () => {
-  const [messages, setMessages] = useState<any[]>([]);
   const [url, setUrl] = useState('https://api.openai.com/v1/chat/completions');
   const [urlHistory, setUrlHistory] = useState<string[]>([]);
   const [apiKey, setApiKey] = useState('');
@@ -187,7 +186,7 @@ const ChatContent: React.FC = () => {
       if (messages.length > 0) {
         const lastMessage = messages.pop();
         chatRef.current.clearMessages(true);
-        messages.forEach(message => chatRef.current.addMessage(message));
+        messages.forEach((message: any) => chatRef.current.addMessage(message));
 
         if (lastMessage.role === 'user' && lastMessage.text) {
           setInputText(lastMessage.text);
@@ -307,7 +306,7 @@ const ChatContent: React.FC = () => {
           requestInterceptor={handleRequestInterceptor}
           responseInterceptor={handleResponseInterceptor}
           demo={true}
-          onNewMessage={() => setHasMessages(true)}
+          onMessage={() => setHasMessages(true)}
         />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>

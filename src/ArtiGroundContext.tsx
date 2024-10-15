@@ -1,5 +1,11 @@
 import React, { createContext, useContext, useState } from 'react';
-import { SandpackConsoleData } from "@codesandbox/sandpack-react";
+
+// Define SandpackConsoleData type
+export type SandpackConsoleData = Array<{
+  data: Array<string | Record<string, string>> | undefined;
+  id: string;
+  method: string; // You can make this more specific if you know the exact methods
+}>;
 
 interface SandpackController {
   getFiles: () => Record<string, string>;
@@ -16,7 +22,7 @@ interface ArtiGroundContextType {
 const ArtiGroundContext = createContext<ArtiGroundContextType | undefined>(undefined);
 
 export const ArtiGroundProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
-  const [logs, setLogs] = useState<SandpackConsoleData>({ logs: [] });
+  const [logs, setLogs] = useState<SandpackConsoleData>([]);
   const [sandpackController, setSandpackController] = useState<SandpackController | null>(null);
 
   return (

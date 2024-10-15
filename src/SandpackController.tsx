@@ -10,7 +10,7 @@ interface SandpackControllerProps {
 
 export const SandpackController: React.FC<SandpackControllerProps> = ({ setSandpackController }) => {
   const { sandpack, listen } = useSandpack();
-  const [fileUpdateTrigger, setFileUpdateTrigger] = useState(0);
+  const [_fileUpdateTrigger, setFileUpdateTrigger] = useState(0);
 
   const getFiles = useCallback(() => {
     return sandpack.files;

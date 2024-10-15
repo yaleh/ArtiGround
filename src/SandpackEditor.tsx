@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Sandpack, SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, SandpackConsole, SandpackConsoleData } from "@codesandbox/sandpack-react";
+import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, SandpackConsole } from "@codesandbox/sandpack-react";
 import { SandpackFileExplorer } from 'sandpack-file-explorer';
 import { useTemplate } from './TemplateContext';
 import { useTheme, useMediaQuery, Box } from '@mui/material';
 import { SandpackController } from './SandpackController';
-import { useArtiGround } from './ArtiGroundContext';
+import { useArtiGround, SandpackConsoleData } from './ArtiGroundContext';
 
 const SandpackEditor: React.FC = () => {
   const { selectedTemplate } = useTemplate();
