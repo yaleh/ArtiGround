@@ -3,7 +3,8 @@ import { processResponseArtifacts } from './responseInterceptor';
 
 describe('processResponseArtifacts', () => {
   it('should replace Artifact tags with Markdown code block symbols and extract artifacts', () => {
-    const text = `Here is some code: <Artifact filepath="example.js">
+    const text = `Here is some code:
+<Artifact filepath="example.js">
 const Example = () => {
   return <div>Hello</div>;
 };
@@ -11,7 +12,7 @@ const Example = () => {
 
     const result = processResponseArtifacts(text, true);
 
-    expect(result.modifiedText).toBe(`Here is some code: 
+    expect(result.modifiedText).toBe(`Here is some code:
 \`\`\`
 const Example = () => {
   return <div>Hello</div>;
@@ -26,20 +27,22 @@ const Example = () => {
   });
 
   it('should handle multiple Artifact blocks', () => {
-    const text = `First block: <Artifact filepath="a.js">
+    const text = `First block:
+<Artifact filepath="a.js">
 const A = () => <div>A</div>;
 </Artifact>
-Second block: <Artifact filepath="b.js">
+Second block:
+<Artifact filepath="b.js">
 const B = () => <div>B</div>;
 </Artifact>`;
 
     const result = processResponseArtifacts(text, true);
 
-    expect(result.modifiedText).toBe(`First block: 
+    expect(result.modifiedText).toBe(`First block:
 \`\`\`
 const A = () => <div>A</div>;
 \`\`\`
-Second block: 
+Second block:
 \`\`\`
 const B = () => <div>B</div>;
 \`\`\``);
@@ -74,11 +77,13 @@ const B = () => <div>B</div>;
   });
 
   it('should handle empty Artifact tags', () => {
-    const text = 'Empty block: <Artifact filepath="empty.txt"></Artifact>';
+    const text = `Empty block:
+<Artifact filepath="empty.txt">
+</Artifact>`;
 
     const result = processResponseArtifacts(text, true);
 
-    expect(result.modifiedText).toBe(`Empty block: 
+    expect(result.modifiedText).toBe(`Empty block:
 \`\`\`
 \`\`\``);
     expect(result.artifacts).toEqual([
@@ -142,7 +147,8 @@ const y = 2;
   });
 
   it('should keep nested Artifact tags unchanged', () => {
-    const text = `Nested tags: <Artifact filepath="outer.js">
+    const text = `Nested tags:
+<Artifact filepath="outer.js">
 const Outer = () => (
   <div>
     <Artifact filepath="inner.js">
@@ -155,7 +161,7 @@ const Outer = () => (
 
     const result = processResponseArtifacts(text, true);
 
-    expect(result.modifiedText).toBe(`Nested tags: 
+    expect(result.modifiedText).toBe(`Nested tags:
 \`\`\`
 const Outer = () => (
   <div>
@@ -182,13 +188,14 @@ const Outer = () => (
   });
 
   it('should handle Artifact tags with attributes', () => {
-    const text = `With attributes: <Artifact filepath="e.js" data-test="example" class="code-block">
+    const text = `With attributes:
+<Artifact filepath="e.js" data-test="example" class="code-block">
 const E = () => <div>E</div>;
 </Artifact>`;
 
     const result = processResponseArtifacts(text, true);
 
-    expect(result.modifiedText).toBe(`With attributes: 
+    expect(result.modifiedText).toBe(`With attributes:
 \`\`\`
 const E = () => <div>E</div>;
 \`\`\``);
@@ -267,11 +274,78 @@ export default App;`
       }
     ]);
   });
+
+  it('should handle Artifact tags with React TSX code and additional attributes', () => {
+    const text = `Here is the \`<Artifact>\` section with the React TSX code for the App.tsx file:
+
+<Artifact type="application/artifacts.react" filepath="App.tsx" title="GreenTech Chemicals Landing Page">
+import React from 'react';
+const App: React.FC = () => {
+  return (
+      <header>
+        <h1>GreenTech Chemicals</h1>
+        <nav>
+          <ul>
+            <li><a href="#">About Us</a></li>
+          </ul>
+        </nav>
+      </header>
+  );
+};
+export default App;
+</Artifact>
+
+This code creates a simple landing page with a header, main content area, and footer. The design is clean and minimalistic, with a neutral color scheme and a modern font. The navigation menu and social media links are included in the header and footer, respectively.`;
+
+    const result = processResponseArtifacts(text, true);
+
+    expect(result.modifiedText).toBe(`Here is the \`<Artifact>\` section with the React TSX code for the App.tsx file:
+
+\`\`\`
+import React from 'react';
+const App: React.FC = () => {
+  return (
+      <header>
+        <h1>GreenTech Chemicals</h1>
+        <nav>
+          <ul>
+            <li><a href="#">About Us</a></li>
+          </ul>
+        </nav>
+      </header>
+  );
+};
+export default App;
+\`\`\`
+
+This code creates a simple landing page with a header, main content area, and footer. The design is clean and minimalistic, with a neutral color scheme and a modern font. The navigation menu and social media links are included in the header and footer, respectively.`);
+
+    expect(result.artifacts).toEqual([
+      {
+        filepath: 'App.tsx',
+        content: `import React from 'react';
+const App: React.FC = () => {
+  return (
+      <header>
+        <h1>GreenTech Chemicals</h1>
+        <nav>
+          <ul>
+            <li><a href="#">About Us</a></li>
+          </ul>
+        </nav>
+      </header>
+  );
+};
+export default App;`
+      }
+    ]);
+  });
 });
 
 describe('processResponseArtifacts with modifyResponse false', () => {
   it('should not modify text but still extract artifacts', () => {
-    const text = `Here is some code: <Artifact filepath="example.js">
+    const text = `Here is some code:
+<Artifact filepath="example.js">
 const Example = () => {
   return <div>Hello</div>;
 };
@@ -289,10 +363,12 @@ const Example = () => {
   });
 
   it('should handle multiple Artifact blocks without modifying text', () => {
-    const text = `First block: <Artifact filepath="a.js">
+    const text = `First block:
+<Artifact filepath="a.js">
 const A = () => <div>A</div>;
 </Artifact>
-Second block: <Artifact filepath="b.js">
+Second block:
+<Artifact filepath="b.js">
 const B = () => <div>B</div>;
 </Artifact>`;
 
@@ -334,7 +410,8 @@ const y = 2;
   });
 
   it('should not modify nested Artifact tags', () => {
-    const text = `Nested tags: <Artifact filepath="outer.js">
+    const text = `Nested tags:
+<Artifact filepath="outer.js">
 const Outer = () => (
   <div>
     <Artifact filepath="inner.js">

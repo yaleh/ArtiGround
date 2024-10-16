@@ -13,7 +13,7 @@ export const processResponseArtifacts = (
   if (text) {
     let depth = 0;
     const modifiedText = text.replace(
-      /(<Artifact[^>]*>)|(<\/Artifact>)/g,
+      /^(<Artifact[^>]*>)|^(<\/Artifact>)/gm,
       (match: string, openTag: string | undefined, closeTag: string | undefined, offset: number, string: string): string => {
         const prevChar = offset > 0 ? string[offset - 1] : '\n';
         const nextChar = offset + match.length < string.length ? string[offset + match.length] : '\n';
@@ -64,7 +64,7 @@ export const processResponseArtifacts = (
     let nestedDepth = 0;
 
     for (const line of lines) {
-      if (line.includes('<Artifact')) {
+      if (line.trim().startsWith('<Artifact')) {
         if (isInArtifact) {
           nestedDepth++;
         } else {
@@ -73,7 +73,7 @@ export const processResponseArtifacts = (
         }
       }
       if (isInArtifact && artifacts[currentArtifactIndex]) {
-        if (line.includes('</Artifact>')) {
+        if (line.trim().startsWith('</Artifact>')) {
           if (nestedDepth > 0) {
             nestedDepth--;
             artifacts[currentArtifactIndex].content += line + '\n';
