@@ -1,8 +1,70 @@
-# React + Vite
+# ArtiGround
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ArtiGround is an interactive coding environment that combines a chat interface with a live code editor and preview. It's designed to help developers quickly prototype, experiment, and learn various web technologies.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🤖 AI-powered chat interface for coding assistance
+- 📝 Live code editor with syntax highlighting
+- 👁️ Real-time preview of your code
+- 🗂️ File explorer for managing project files
+- 🖥️ Console output for debugging
+- 📦 Multiple project templates to choose from
+- 💾 Download your project as a zip file
+- 📱 Responsive design for both desktop and mobile use
+
+## Technologies Used
+
+- React
+- TypeScript
+- Material-UI
+- Sandpack (for live coding environment)
+- Deep Chat (for AI chat interface)
+
+## Getting Started
+
+To run ArtiGround locally:
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/artiground.git
+   ```
+
+2. Navigate to the project directory:
+   ```
+   cd artiground
+   ```
+
+3. Install dependencies:
+   ```
+   npm install
+   ```
+
+4. Start the development server:
+   ```
+   npm run dev
+   ```
+
+5. Open your browser and visit `http://localhost:5173`
+
+## Usage
+
+1. Select a project template from the dropdown menu in the top right corner.
+2. Use the chat interface on the left to ask questions or request code changes.
+3. View and edit your code in the central editor panel.
+4. See the live preview of your project in the right panel.
+5. Check console output and errors in the bottom panel.
+6. Download your project using the download button at the bottom of the chat interface.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Thanks to the creators of Sandpack and Deep Chat for their excellent libraries.
+- Inspired by various online coding platforms and AI assistants.
