@@ -15,7 +15,31 @@ import DownloadIcon from '@mui/icons-material/Download';
 // Add this import for JSZip
 import JSZip from 'jszip';
 import { useTheme, useMediaQuery } from '@mui/material';
-import { HTMLClassUtilities } from 'deep-chat'; // Add this import
+
+// Update these type declarations
+type CSSProperties = Partial<CSSStyleDeclaration>;
+
+interface StatefulStyles {
+  default?: CSSProperties;
+  hover?: CSSProperties;
+  active?: CSSProperties;
+  focus?: CSSProperties;
+}
+
+type EventToFunction = {
+  [K in keyof GlobalEventHandlersEventMap]?: (event: Partial<GlobalEventHandlersEventMap[K]>) => void;
+} & {
+  [eventName: string]: (event: CustomEvent) => void;
+};
+
+interface HTMLClassUtility {
+  events?: EventToFunction;
+  styles?: StatefulStyles;
+}
+
+type HTMLClassUtilities = {
+  [className: string]: HTMLClassUtility;
+};
 
 const ChatContent: React.FC = () => {
   const [url, setUrl] = useState('https://api.openai.com/v1/chat/completions');
@@ -271,11 +295,11 @@ const ChatContent: React.FC = () => {
           textAlign: 'center',
         },
         hover: { backgroundColor: '#ebebeb' },
-        click: { backgroundColor: '#e4e4e4' },
+        active: { backgroundColor: '#e4e4e4' },
       },
     },
     'custom-button-text': {
-      styles: { default: { pointerEvents: 'none' as const } },
+      styles: { default: { pointerEvents: 'none' } },
     },
   }), []);
 
