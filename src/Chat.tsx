@@ -15,6 +15,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 // Add this import for JSZip
 import JSZip from 'jszip';
 import { useTheme, useMediaQuery } from '@mui/material';
+import { HTMLClassUtilities } from 'deep-chat'; // Add this import
 
 const ChatContent: React.FC = () => {
   const [url, setUrl] = useState('https://api.openai.com/v1/chat/completions');
@@ -30,6 +31,7 @@ const ChatContent: React.FC = () => {
   const [lastError, setLastError] = useState<string | Record<string, string> | null>(null);
   const [isErrorButtonEnabled, setIsErrorButtonEnabled] = useState(false);
   const [hasMessages, setHasMessages] = useState(false);
+  const [projectButtons, setProjectButtons] = useState<string[]>([]);
 
   const chatRef = useRef<any>(null);
 
@@ -230,6 +232,53 @@ const ChatContent: React.FC = () => {
     }
   }, [sandpackController]);
 
+  useEffect(() => {
+    fetch('/project_buttons.json')
+      .then(response => response.json())
+      .then(data => setProjectButtons(data.buttons))
+      .catch(error => console.error('Error loading project buttons:', error));
+  }, []);
+
+  const introPanel = useMemo(() => (
+    <div style={{ display: 'none', padding: '20px', backgroundColor: '#f3f3f3', borderRadius: '10px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '15px', fontSize: '18px' }}>
+        <b>Choose a project to start:</b>
+      </div>
+      {projectButtons.map((buttonText, index) => (
+        <div key={index} className="custom-button" style={{ marginTop: index > 0 ? '15px' : '0' }}>
+          <div className="custom-button-text">{buttonText}</div>
+        </div>
+      ))}
+    </div>
+  ), [projectButtons]);
+
+  const htmlClassUtilities: HTMLClassUtilities = useMemo(() => ({
+    'custom-button': {
+      events: {
+        click: (event: Partial<MouseEvent>) => {
+          const text = (event.target as HTMLElement)?.textContent;
+          if (text && chatRef.current) {
+            chatRef.current.submitUserMessage(`Create a ${text} project`);
+          }
+        },
+      },
+      styles: {
+        default: {
+          backgroundColor: '#f2f2f2',
+          borderRadius: '10px',
+          padding: '10px',
+          cursor: 'pointer',
+          textAlign: 'center',
+        },
+        hover: { backgroundColor: '#ebebeb' },
+        click: { backgroundColor: '#e4e4e4' },
+      },
+    },
+    'custom-button-text': {
+      styles: { default: { pointerEvents: 'none' as const } },
+    },
+  }), []);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <ChatSettings
@@ -295,7 +344,10 @@ const ChatContent: React.FC = () => {
           responseInterceptor={handleResponseInterceptor}
           demo={true}
           onMessage={() => setHasMessages(true)}
-        />
+          htmlClassUtilities={htmlClassUtilities}
+        >
+          {introPanel}
+        </DeepChat>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
         <Button 
