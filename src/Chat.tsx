@@ -14,6 +14,7 @@ import UndoIcon from '@mui/icons-material/Undo';
 import DownloadIcon from '@mui/icons-material/Download';
 // Add this import for JSZip
 import JSZip from 'jszip';
+import { useTheme, useMediaQuery } from '@mui/material';
 
 const ChatContent: React.FC = () => {
   const [url, setUrl] = useState('https://api.openai.com/v1/chat/completions');
@@ -33,6 +34,9 @@ const ChatContent: React.FC = () => {
   const chatRef = useRef<any>(null);
 
   const { systemPrompt } = useSystemPrompt();
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const loadHistory = (key: string) => {
@@ -257,7 +261,7 @@ const ChatContent: React.FC = () => {
             }
           }}
           connect={{ url: url }}
-          style={{ borderRadius: '4px', width: '100%', height: '100%' }}
+          style={{ borderRadius: '4px', width: '100%', height: '100%', maxHeight: isMobile ? '500px' : '100%' }}
           messageStyles={{
             default: {
               shared: {

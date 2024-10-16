@@ -73,8 +73,8 @@ const SandpackEditor: React.FC = () => {
                   showNavigator={true}
                   showRefreshButton={true}
                   style={{
-                    height: isMobile ? '300px' : '100%',
-                    flex: 1,
+                    height: isMobile ? '600px' : 'auto',
+                    flex: isMobile ? 'auto' : 1,
                     width: isMobile ? '100%' : layoutMode === 'default' ? '100%' : '50%',
                   }}
                 />
