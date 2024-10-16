@@ -63,10 +63,11 @@ const SandpackEditor: React.FC = () => {
                   showLineNumbers={true}
                   closableTabs={true}
                   style={{
-                    height: isMobile ? '300px' : '100%',
+                    height: isMobile ? '400px' : '100%',
+                    maxHeight: isMobile ? '400px' : 'auto',
                     flex: 1,
                     width: isMobile ? '100%' : '50%',
-                    display: layoutMode === 'default' ? 'none' : 'block'
+                    display: layoutMode === 'default' ? 'none' : 'flex'
                   }}
                 />
                 <SandpackPreview
