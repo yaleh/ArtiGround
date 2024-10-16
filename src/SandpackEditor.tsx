@@ -9,20 +9,7 @@ const SandpackEditor: React.FC = () => {
   const { selectedTemplate } = useTemplate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  // const [fileExplorerKey, setFileExplorerKey] = useState(0);
   const { setLogs, setSandpackController } = useArtiGround();
-
-  // useEffect(() => {
-  //   const handleFileUpdate = () => {
-  //     setFileExplorerKey(prev => prev + 1);
-  //   };
-
-  //   window.addEventListener('sandpack-file-update', handleFileUpdate);
-
-  //   return () => {
-  //     window.removeEventListener('sandpack-file-update', handleFileUpdate);
-  //   };
-  // }, []);
 
   const handleLogsChange = (logs: SandpackConsoleData) => {
     setLogs(logs);
@@ -97,7 +84,6 @@ const SandpackEditor: React.FC = () => {
                 }}
                 onLogsChange={handleLogsChange}
               >
-                {/* <SandpackConsoleController /> */}
               </SandpackConsole>
             </Box>
           </Box>
