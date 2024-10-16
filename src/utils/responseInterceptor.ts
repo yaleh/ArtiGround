@@ -14,7 +14,7 @@ export const processResponseArtifacts = (
     let depth = 0;
     const modifiedText = text.replace(
       /(<Artifact[^>]*>)|(<\/Artifact>)/g,
-      (match, openTag, closeTag, offset, string) => {
+      (match: string, openTag: string | undefined, closeTag: string | undefined, offset: number, string: string): string => {
         const prevChar = offset > 0 ? string[offset - 1] : '\n';
         const nextChar = offset + match.length < string.length ? string[offset + match.length] : '\n';
         
@@ -48,6 +48,7 @@ export const processResponseArtifacts = (
           depth--;
           return match;
         }
+        return match; // Add this line to ensure a string is always returned
       }
     );
     

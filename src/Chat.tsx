@@ -26,7 +26,7 @@ const ChatContent: React.FC = () => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [fileList, setFileList] = useState<string[]>([]);
   const { logs, sandpackController } = useArtiGround();
-  const [lastError, setLastError] = useState<string | null>(null);
+  const [lastError, setLastError] = useState<string | Record<string, string> | null>(null);
   const [isErrorButtonEnabled, setIsErrorButtonEnabled] = useState(false);
   const [hasMessages, setHasMessages] = useState(false);
 
@@ -152,24 +152,6 @@ const ChatContent: React.FC = () => {
     return response;
   }, [sandpackController]);
 
-  const handleGetSandpackFiles = () => {
-    if (sandpackController) {
-      const files = sandpackController.getFiles();
-      const fileList = Object.keys(files)
-        .map(path => `- ${path}`)
-        .join('\n');
-      
-      if (chatRef.current) {
-        chatRef.current.addMessage({
-          text: `Project Files:\n${fileList}`,
-          role: 'user'
-        });
-      }
-    } else {
-      console.error('Sandpack controller not available');
-    }
-  };
-
   const handleAddErrorToChat = () => {
     if (lastError && chatRef.current) {
       chatRef.current.addMessage({
@@ -223,8 +205,10 @@ const ChatContent: React.FC = () => {
       const zip = new JSZip();
 
       Object.entries(files).forEach(([path, content]) => {
+        // Remove the leading "/" from the path
+        const filePath = path.replace(/^\//, '');
         const fileContent = typeof content === 'string' ? content : JSON.stringify(content);
-        zip.file(path, fileContent);
+        zip.file(filePath, fileContent);
       });
 
       zip.generateAsync({ type: "blob" }).then((content) => {

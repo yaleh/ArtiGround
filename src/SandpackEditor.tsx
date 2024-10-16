@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, SandpackConsole } from "@codesandbox/sandpack-react";
-import { SandpackFileExplorer } from 'sandpack-file-explorer';
+import React from 'react';
+import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, SandpackConsole, SandpackFileExplorer } from "@codesandbox/sandpack-react";
 import { useTemplate } from './TemplateContext';
 import { useTheme, useMediaQuery, Box } from '@mui/material';
 import { SandpackController } from './SandpackController';
@@ -10,20 +9,20 @@ const SandpackEditor: React.FC = () => {
   const { selectedTemplate } = useTemplate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [fileExplorerKey, setFileExplorerKey] = useState(0);
+  // const [fileExplorerKey, setFileExplorerKey] = useState(0);
   const { setLogs, setSandpackController } = useArtiGround();
 
-  useEffect(() => {
-    const handleFileUpdate = () => {
-      setFileExplorerKey(prev => prev + 1);
-    };
+  // useEffect(() => {
+  //   const handleFileUpdate = () => {
+  //     setFileExplorerKey(prev => prev + 1);
+  //   };
 
-    window.addEventListener('sandpack-file-update', handleFileUpdate);
+  //   window.addEventListener('sandpack-file-update', handleFileUpdate);
 
-    return () => {
-      window.removeEventListener('sandpack-file-update', handleFileUpdate);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('sandpack-file-update', handleFileUpdate);
+  //   };
+  // }, []);
 
   const handleLogsChange = (logs: SandpackConsoleData) => {
     setLogs(logs);
@@ -61,7 +60,7 @@ const SandpackEditor: React.FC = () => {
                 height: isMobile ? '200px' : '100%',
                 overflow: 'hidden'
               }}>
-                <SandpackFileExplorer key={fileExplorerKey} />
+                <SandpackFileExplorer/>
               </Box>
               <Box sx={{
                 display: 'flex',

@@ -60,7 +60,7 @@ const ChatSettings: React.FC<ChatSettingsProps> = ({
   useEffect(() => {
     const fetchSystemPrompt = async () => {
       try {
-        const response = await fetch(`/public/system_prompts/${selectedTemplate}.md`);
+        const response = await fetch(`/system_prompts/${selectedTemplate}.md`);
         if (response.ok) {
           const promptText = await response.text();
           setSystemPrompt(promptText);
