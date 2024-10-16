@@ -58,6 +58,7 @@ const ChatContent: React.FC = () => {
   const [projectButtons, setProjectButtons] = useState<string[]>([]);
 
   const chatRef = useRef<any>(null);
+  const [chatHistory, setChatHistory] = useState<any[]>([]);
 
   const { systemPrompt } = useSystemPrompt();
 
@@ -82,6 +83,13 @@ const ChatContent: React.FC = () => {
     setModelHistory(loadHistory('modelHistory'));
     setIsInitialLoad(false);
   }, []);
+
+  useEffect(() => {
+    if (chatRef.current) {
+      const messages = chatRef.current.getMessages();
+      setChatHistory(messages);
+    }
+  }, [url, apiKey, model]);
 
   useEffect(() => {
     setReload(prev => prev + 1);
@@ -369,6 +377,13 @@ const ChatContent: React.FC = () => {
           demo={true}
           onMessage={() => setHasMessages(true)}
           htmlClassUtilities={htmlClassUtilities}
+          onComponentRender={(ref) => {
+            if (chatHistory.length > 0) {
+              chatHistory.forEach((message: any) => {
+                ref.addMessage(message);
+              });
+            }
+          }}
         >
           {introPanel}
         </DeepChat>
