@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTemplate } from './TemplateContext';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 const templates = [
   'static',
@@ -18,22 +19,38 @@ const TemplateSelector: React.FC = () => {
   const { selectedTemplate, setSelectedTemplate } = useTemplate();
 
   return (
-    <div className="template-selector">
-      <label htmlFor="template-select">Template: </label>
-      <select
+    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+      <InputLabel id="template-select-label" sx={{ color: 'common.white' }}>Template</InputLabel>
+      <Select
+        labelId="template-select-label"
         id="template-select"
         value={selectedTemplate}
+        label="Template"
         onChange={(e) => setSelectedTemplate(e.target.value as typeof templates[number])}
+        sx={{
+          color: 'common.white',
+          '.MuiOutlinedInput-notchedOutline': {
+            borderColor: 'common.white',
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'common.white',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'common.white',
+          },
+          '& .MuiSvgIcon-root': {
+            color: 'common.white',
+          },
+        }}
       >
         {templates.map((template) => (
-          <option key={template} value={template}>
+          <MenuItem key={template} value={template}>
             {template}
-          </option>
+          </MenuItem>
         ))}
-      </select>
-    </div>
+      </Select>
+    </FormControl>
   );
 };
 
 export default TemplateSelector;
-

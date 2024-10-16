@@ -4,12 +4,14 @@ import { useTemplate } from './TemplateContext';
 import { useTheme, useMediaQuery, Box } from '@mui/material';
 import { SandpackController } from './SandpackController';
 import { useArtiGround, SandpackConsoleData } from './ArtiGroundContext';
+import { useLayout } from './LayoutContext';
 
 const SandpackEditor: React.FC = () => {
   const { selectedTemplate } = useTemplate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { setLogs, setSandpackController } = useArtiGround();
+  const { layoutMode } = useLayout();
 
   const handleLogsChange = (logs: SandpackConsoleData) => {
     setLogs(logs);
@@ -38,16 +40,17 @@ const SandpackEditor: React.FC = () => {
             <Box sx={{
               display: 'flex',
               flexDirection: isMobile ? 'column' : 'row',
-              height: isMobile ? '100%' : '80%',
+              height: isMobile || layoutMode === 'default' ? '100%' : '80%',
               overflow: 'hidden',
               width: '100%'
             }}>
               <Box sx={{
                 width: isMobile ? '100%' : '200px',
                 height: isMobile ? '200px' : '100%',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                display: layoutMode === 'default' ? 'none' : 'block'
               }}>
-                <SandpackFileExplorer/>
+                <SandpackFileExplorer />
               </Box>
               <Box sx={{
                 display: 'flex',
@@ -63,6 +66,7 @@ const SandpackEditor: React.FC = () => {
                     height: isMobile ? '300px' : '100%',
                     flex: 1,
                     width: isMobile ? '100%' : '50%',
+                    display: layoutMode === 'default' ? 'none' : 'block'
                   }}
                 />
                 <SandpackPreview
@@ -71,12 +75,16 @@ const SandpackEditor: React.FC = () => {
                   style={{
                     height: isMobile ? '300px' : '100%',
                     flex: 1,
-                    width: isMobile ? '100%' : '50%',
+                    width: isMobile ? '100%' : layoutMode === 'default' ? '100%' : '50%',
                   }}
                 />
               </Box>
             </Box>
-            <Box sx={{ height: isMobile ? '200px' : '20%', minHeight: '100px' }}>
+            <Box sx={{ 
+              height: layoutMode === 'default' ? '0px' : isMobile ? '200px' : '20%', 
+              minHeight: layoutMode === 'default' ? '0px' : '100px',
+              display: layoutMode === 'default' ? 'none' : 'block'
+            }}>
               <SandpackConsole
                 standalone
                 style={{
@@ -84,6 +92,7 @@ const SandpackEditor: React.FC = () => {
                 }}
                 onLogsChange={handleLogsChange}
               >
+                {/* <SandpackConsoleController /> */}
               </SandpackConsole>
             </Box>
           </Box>
