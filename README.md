@@ -1,12 +1,12 @@
-# ArtiGround
+# ArtiGround (Artifact Playground)
 
-ArtiGround is an interactive coding environment that combines a chat interface with a live code editor and preview. It's designed to help developers quickly prototype, experiment, and learn various web technologies.
+ArtiGround is an interactive coding environment that combines a chat interface with a live code editor and preview. It leverages Large Language Model (LLM) capabilities to help developers quickly prototype, experiment, and learn various web technologies by generating executable widgets (artifacts) for different web frontend frameworks.
 
 ## Features
 
-- 🤖 AI-powered chat interface for coding assistance
+- 🤖 AI-powered chat interface for coding assistance, powered by LLMs
 - 📝 Live code editor with syntax highlighting
-- 👁️ Real-time preview of your code
+- 👁️ Real-time preview of your code, including generated artifacts
 - 🗂️ File explorer for managing project files
 - 🖥️ Console output for debugging
 - 📦 Multiple project templates to choose from
@@ -20,6 +20,7 @@ ArtiGround is an interactive coding environment that combines a chat interface w
 - Material-UI
 - Sandpack (for live coding environment)
 - Deep Chat (for AI chat interface)
+- LLMs (for artifact generation and coding assistance) 
 
 ## Getting Started
 
@@ -50,9 +51,9 @@ To run ArtiGround locally:
 ## Usage
 
 1. Select a project template from the dropdown menu in the top right corner.
-2. Use the chat interface on the left to ask questions or request code changes.
+2. Use the chat interface on the left to ask questions, request code changes, or generate artifacts using LLMs.
 3. View and edit your code in the central editor panel.
-4. See the live preview of your project in the right panel.
+4. See the live preview of your project, including generated artifacts, in the right panel.
 5. Check console output and errors in the bottom panel.
 6. Download your project using the download button at the bottom of the chat interface.
 
